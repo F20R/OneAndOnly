@@ -1,0 +1,79 @@
+.\symfony.exe server:start
+
+\FUN FACTS\
+
+++ EL "." DE JAVA = "->" EN PHP
+++ EL "String ++" DE JAVA = "$" EN PHP
+
+\IMPORTANTE!\
+
++EL RESPONSE MUESTRA PARA HTML
++EL JSONRESPONSE MUESTRA PARA API
+* SIN COMILLAS AL LLAMAR A LA VARIABLE A RELLENAR (FORMULARIO JSON)
+
+\CONTROLLER\
+
+* Poner NAME a las rutas del controller (@ROUTE):
+
+Si bien no es algo obligatorio, es bastante practico a la hora de enlazarlos, puesto que si cambiasemos el
+enlace de la ruta, tendriamos que renombrar dicha ruta en los demas archivos. Con la opción NAME, sin importar
+cuanto cambiemos la ruta, el nombre seguira siendo el mismo y no afectara a los demas archivos dicho cambio :D
+
+<---CREAR BBDD DESDE AQUI--->
+
+bin/console doctrine_database:create
+
+<---CREAR TABLAS DESDE AQUI--->
+
+php bin/console make:entity
+
+<---HACER UNA MIGRACION--->
+
+php bin/console make:migration
+
+
+
+composer require doctrine/orm-pack
+composer require doctrine/orm
+composer require doctrine/doctrine-bundle
+composer require symfony/maker-bundle
+
+<---CREAR UNA DATABASE (ALTERNATIVA)--->
+
+symfony console doctrine:database:create
+
+<---DAR LUGAR A LA DATABASE--->
+
+php bin/consolo make:migration
+
+<---EJECUTAR DICHA MIGRACION--->
+
+php bin/console doctrine:migrations:migrate
+
+
+<---¿QUE HACE ESTO?--->
+
+persist -> CONTROLA Y GESTIONA LA BASE DE DATOS
+flush -> LA ENVIA (INFO)
+
+
+
+<---PONER NOMBRE POR DEFECTO--->
+
+$nombre = $request->get('nombre', 'D10S');
+
+
+<---FUNCIONALIDADES DE API (BUNDLE)---> (SE TIENE QUE USAR SERIALIZER+++)
+
+
+composer require symfony/serializer-pack (PONER ESTO SI TE DA ERROR EN EL SIGUIENTE CODIGO)
+composer require friendsofsymfony/rest-bundle
+
+
+composer require symfony/validator twig doctrine/annotations
+
+
+
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\HttpFoundation\Request;

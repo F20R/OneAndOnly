@@ -1,0 +1,6 @@
+App\Entity\Usuario:
+  attributes:
+    id:
+      groups ['usuario']
+    nombre:
+      groups ['usuario']
