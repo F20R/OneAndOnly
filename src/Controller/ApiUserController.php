@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UsuarioBDRepository;
+use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,9 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiUserController extends AbstractController
 {
     #[Route('/api/user', name: 'app_api_user')]
-    public function list(UsuarioBDRepository $usuarioBDRepository, Utils $utils): JsonResponse
+    public function list(UsuarioRepository $usuarioRepository, Utils $utils): JsonResponse
     {
-        $listUsers = $usuarioBDRepository->findAll();
+        $listUsers = $usuarioRepository->findAll();
 
         $json = $utils->toJson($listUsers);
 

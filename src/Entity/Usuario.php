@@ -19,6 +19,8 @@ class Usuario
     #[ORM\Column(length: 200, nullable: true)]
     private ?string $password = null;
 
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,4 +49,5 @@ class Usuario
 
         return $this;
     }
+
 }
