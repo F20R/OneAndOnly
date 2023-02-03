@@ -6,65 +6,116 @@ class CreateUserDto
 {
 
 
-    private string $username ;
+    private string $nombre ;
 
-    private string $password ;
+    private string $apellidos ;
 
-    private  string $rolName;
+    private  string $fechaNacimiento;
+
+    private  string $genero;
+
+    private  string $usuario;
+
+    private  string $correo;
 
     public function __construct()
     {
     }
 
+    /**
+     * @return string
+     */
+    public function getNombre(): string
+    {
+        return $this->nombre;
+    }
 
+    /**
+     * @param string $nombre
+     */
+    public function setNombre(string $nombre): void
+    {
+        $this->nombre = $nombre;
+    }
 
     /**
      * @return string
      */
-    public function getUsername(): string
+    public function getApellidos(): string
     {
-        return $this->username;
+        return $this->apellidos;
     }
 
     /**
-     * @param string $username
+     * @param string $apellidos
      */
-    public function setUsername(string $username): void
+    public function setApellidos(string $apellidos): void
     {
-        $this->username = $username;
+        $this->apellidos = $apellidos;
     }
 
     /**
      * @return string
      */
-    public function getPassword(): string
+    public function getFechaNacimiento(): string
     {
-        return $this->password;
+        return $this->fechaNacimiento;
     }
 
     /**
-     * @param string $password
+     * @param string $fechaNacimiento
      */
-    public function setPassword(string $password): void
+    public function setFechaNacimiento(string $fechaNacimiento): void
     {
-        $this->password = $password;
+        $this->fechaNacimiento = $fechaNacimiento;
     }
-
 
     /**
      * @return string
      */
-    public function getRolName(): string
+    public function getGenero(): string
     {
-        return $this->rolName;
+        return $this->genero;
     }
 
     /**
-     * @param string $rolName
+     * @param string $genero
      */
-    public function setRolName(string $rolName): void
+    public function setGenero(string $genero): void
     {
-        $this->rolName = $rolName;
+        $this->genero = $genero;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsuario(): string
+    {
+        return $this->usuario;
+    }
+
+    /**
+     * @param string $usuario
+     */
+    public function setUsuario(string $usuario): void
+    {
+        $this->usuario = $usuario;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCorreo(): string
+    {
+        return $this->correo;
+    }
+
+    /**
+     * @param string $correo
+     */
+    public function setCorreo(string $correo): void
+    {
+        $this->correo = $correo;
     }
 
 

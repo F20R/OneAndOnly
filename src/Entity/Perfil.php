@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PerfilRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PerfilRepository::class)]
 class Perfil
@@ -24,7 +25,69 @@ class Perfil
     private ?\DateTimeInterface $fechaNacimiento = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $sexo = null;
+    private ?int $genero = null;
+
+    #[ORM\OneToOne(inversedBy: 'perfil', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'id_usuario',nullable: false)]
+    private ?Usuario $usuario = null;
+
+    #[ORM\Column(length: 400)]
+    #[Groups(['user_query'])]
+    private ?string $correo = null;
+
+    /**
+     * @return string|null
+     */
+    public function getCorreo(): ?string
+    {
+        return $this->correo;
+    }
+
+    /**
+     * @param string|null $correo
+     */
+    public function setCorreo(?string $correo): void
+    {
+        $this->correo = $correo;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getImagen(): ?string
+    {
+        return $this->imagen;
+    }
+
+    /**
+     * @param string|null $imagen
+     */
+    public function setImagen(?string $imagen): void
+    {
+        $this->imagen = $imagen;
+    }
+
+    #[ORM\Column(length: 400)]
+    #[Groups(['user_query'])]
+    private ?string $imagen = null;
+
+
+
+    /**
+     * @return Usuario|null
+     */
+    public function getUsuario(): ?Usuario
+    {
+        return $this->usuario;
+    }
+
+    /**
+     * @param Usuario|null $usuario
+     */
+    public function setUsuario(?Usuario $usuario): void
+    {
+        $this->usuario = $usuario;
+    }
 
     public function getId(): ?int
     {
@@ -67,14 +130,14 @@ class Perfil
         return $this;
     }
 
-    public function getSexo(): ?int
+    public function getGenero(): ?int
     {
-        return $this->sexo;
+        return $this->genero;
     }
 
-    public function setSexo(?int $sexo): self
+    public function setGenero(?int $genero): self
     {
-        $this->sexo = $sexo;
+        $this->genero = $genero;
 
         return $this;
     }
