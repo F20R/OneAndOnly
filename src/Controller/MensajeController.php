@@ -52,7 +52,7 @@ class MensajeController extends AbstractController
 
             $listMensajes = $mensajeRepository->findAll();
 
-            $listJson = $utils->toJson($listMensajes, null);
+            $listJson = $utils->toJson($listMensajes);
 
             return new JsonResponse($listJson, 200, [], true);
 

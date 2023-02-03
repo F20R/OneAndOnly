@@ -32,15 +32,14 @@ class Utils
     public function toJson($data): string
     {
         //Inicialización de serializador
-       $encoders = [new XmlEncoder(), new JsonEncoder()];
-       $normalizers = [new ObjectNormalizer()];
-       $serializer = new Serializer($normalizers, $encoders);
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
 
-            $json = $serializer->serialize($data, 'json');
+        $json = $serializer->serialize($data, 'json');
 
-       return $json;
-   }
-
+        return $json;
+    }
 
 
 }

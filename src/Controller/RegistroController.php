@@ -2,52 +2,57 @@
 
 namespace App\Controller;
 
+use App\DTO\CreateUserDto;
+use App\Dto\LoginDto;
+use App\Entity\ApiKey;
+use App\Entity\Perfil;
+use App\Entity\Rol;
+use App\Entity\Usuario;
+use App\Utilidades\Utils;
+use Doctrine\Persistence\ManagerRegistry;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use OpenApi\Attributes as OA;
 
-class RegistroController {}
+class RegistroController extends AbstractController
+{
 
-    $conexion = mysqli_connect("localhost","root","12345", "prueba" );//correcto
-    if (!$conexion){
-        echo 'Error al conectar a la base de datos';
-    }
-    else {
-        echo 'Conectado a la base de datos';
-    }
+    private ManagerRegistry $doctrine;
 
-    include 'Usuario.php';
-    //Recibir los datos y almacenarlos en variables
-    $nombre = $_POST["nombre"];
-    $apellidos = $_POST["apellidos"];
-    $correo = $_POST["correo"];
-    $usuario = $_POST["usuario"];
-    $contrasenya = $_POST["contraseña"];
-    $genero = $_POST["genero"];
-    $fechaNacimiento = $_POST["fechaNacimiento"];
-
-
-
-    $verificar_usuario = mysqli_query($conexion, "SELECT * FROM usuarios WHERE usuario = '$usuario'");//correcto
-
-
-    if (mysqli_num_rows($verificar_usuario) > 0){
-        echo 'El usuario ya esta registrado';
-        exit;
-    }else{
-
-        $insertar =mysqli_query($conexion, "INSERT INTO usuarios(nombre, apellidos, correo, usuario, contraseña, genero , fechaNacimiento) VALUES ('$nombre', '$apellidos', '$correo', '$usuario', '$contrasenya', '$genero' ,'$fechaNacimiento' ");
-
-
-        if (!$insertar){
-            echo 'Error al registrarse';
-
-        }else {
-            echo'Usuario registrado exitosamente';
-        }
-
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this-> doctrine = $managerRegistry;
     }
 
+    #[Route('/usuario/guardar', name: 'app_usuario_crear', methods: ['POST'])]
+    #[OA\Tag(name: 'Register')]
+    #[OA\RequestBody(description: "Dto de autentificación", content: new OA\JsonContent(ref: new Model(type: CreateUserDto::class)))]
+    public function crear(Request $request): JsonResponse
+    {
+
+        //Obtener Json del body
+        $json = json_decode($request->getContent(), true);
 
 
 
-//Cerrar conexion
-mysqli_close($conexion);
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        $usuarioNuevo = new Perfil();
+        $usuarioNuevo->setNombre($json['nombre']);
+        $usuarioNuevo->setApellidos($json['apellidos']);
+        $usuarioNuevo-> setFechaNacimiento((date_create_from_format('Y/d/m H:i:s',$json['fecha_nacimiento'])));
+        $usuarioNuevo-> setUsuario();
+        $usuarioNuevo-> setGenero($json['genero']);
+        $usuarioNuevo-> setCorreo($json['correo']);
+        $usuarioNuevo-> setImagen($json['imagen']);
+
+        //GUARDAR
+        $em = $this->doctrine->getManager();
+        $em->persist($usuarioNuevo);
+        $em->flush();
+
+        return new JsonResponse("{ mensaje: Usuario creado correctamente }", 200, [], true);
+    }
+}

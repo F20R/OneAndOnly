@@ -15,7 +15,7 @@ class DtoConverters
     {
 
         $perfilDto = new PerfilDto($perfil->getId(),$perfil->getNombre(),
-            $perfil->getApellidos(),$perfil->getFechaNacimiento(),$perfil->getSexo(),$perfil->getUsuario()->getUsername());
+            $perfil->getApellidos(),$perfil->getFechaNacimiento(),$perfil->getGenero(),$perfil->getUsuario()->getUsername());
 
         return $perfilDto;
     }

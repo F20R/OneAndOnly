@@ -51,7 +51,7 @@ class UsuarioController extends AbstractController
 
         foreach($listUsuarios as $user){
             $usarioDto = $converters-> usuarioToDto($user);
-            $json = $utils->toJson($usarioDto,null);
+            $json = $utils->toJson($usarioDto);
             $listJson[] = json_decode($json);
         }
 
@@ -84,7 +84,7 @@ class UsuarioController extends AbstractController
 
         foreach($listUsuarios as $user){
             $usarioDto = $converters-> usuarioToDto($user);
-            $json = $utils->toJson($usarioDto,null);
+            $json = $utils->toJson($usarioDto);
             $listJson[] = json_decode($json);
         }
 
