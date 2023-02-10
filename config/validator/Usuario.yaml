@@ -1,0 +1,9 @@
+App\Entity\Author:
+  properties:
+    nombre:
+      - NotBlank: ~
+      - Length:
+          min: 30
+          max: 250
+          minMessage: 'Mas largo {{ limit }} characters long'
+          maxMessage: 'No te pases {{ limit }} characters'

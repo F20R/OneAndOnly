@@ -4,3 +4,5 @@ App\Entity\Usuario:
       groups ['usuario']
     nombre:
       groups ['usuario']
+    imagen:
+      groups ['usuario']

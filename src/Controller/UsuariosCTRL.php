@@ -21,7 +21,7 @@ class UsuariosCTRL extends AbstractController
     }
 
     /**
-     * @Route("/usuarios" , name="lusuarios")
+     * @Route("/usuari" , name="lusuarios")
      */
     public function lista(Request $request, UsuarioBDRepository $uBD){
         $usuarios = $uBD->findAll();

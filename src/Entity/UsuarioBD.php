@@ -19,6 +19,7 @@ class UsuarioBD
     #[ORM\Column(length: 512, nullable: true)]
     private ?string $imagen = null;
 
+
     public function getId(): ?int
     {
         return $this->id;
