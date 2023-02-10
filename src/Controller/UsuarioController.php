@@ -118,13 +118,13 @@ class UsuarioController extends AbstractController
 
 
         //Obtener Json del body y pasarlo a DTO
-        $mapper = new JsonMapper();
-        $createUserDto = $mapper->map(json_decode($request->getContent()), new CreateUserDto());
+        $json = json_decode($request-> getContent(), true);
 
         //Obtenemos los parámetros del JSON
-        $username =$createUserDto->getUsername();
-        $password = $createUserDto->getPassword();
-        $rolname = $createUserDto->getRolName();
+        $username = $json['username'];
+        $password = $json['password'];
+        $rolname = $json['rol'];
+
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
         if($username != null and $password != null) {
@@ -133,10 +133,11 @@ class UsuarioController extends AbstractController
             $usuarioNuevo->setPassword($utils->hashPassword($password));
 
 
+
             //GESTION DEL ROL
             if ($rolname == null) {
                 //Obtenemos el rol de usuario por defecto
-                $rolUser = $rolRepository->findOneByIdentificador("USER");
+                $rolUser = $rolRepository->findOneByIdentificador("R_02");
                 $usuarioNuevo->setRol($rolUser);
 
             } else {

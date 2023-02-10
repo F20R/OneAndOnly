@@ -39,28 +39,13 @@ class RolRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Rol[] Returns an array of Rol objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Rol
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByIdentificador($descripcion): ?Rol
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.descripcion = :val')
+            ->setParameter('val', $descripcion)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }
