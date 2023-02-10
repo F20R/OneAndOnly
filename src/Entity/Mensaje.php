@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\MensajeRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MensajeRepository::class)]
+#[ORM\Table(name: 'mensaje', schema: 'kpasadb')]
 class Mensaje
 {
     #[ORM\Id]
@@ -14,11 +16,11 @@ class Mensaje
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 200, nullable: true)]
+    #[ORM\Column(length: 150, nullable: true)]
     private ?string $descripcion = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $fecha = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTime $fecha = null;
 
     public function getId(): ?int
     {
@@ -30,19 +32,19 @@ class Mensaje
         return $this->descripcion;
     }
 
-    public function setDescripcion(?string $descripcion): self
+    public function setDescripcion(string $descripcion): self
     {
         $this->descripcion = $descripcion;
 
         return $this;
     }
 
-    public function getFecha(): ?\DateTimeInterface
+    public function getFecha(): string
     {
-        return $this->fecha;
+        return $this->fecha->format('Y-m-d H:i:s');;
     }
 
-    public function setFecha(?\DateTimeInterface $fecha): self
+    public function setFecha(DateTime $fecha): self
     {
         $this->fecha = $fecha;
 

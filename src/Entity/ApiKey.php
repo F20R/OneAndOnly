@@ -3,10 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\ApiKeyRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ApiKeyRepository::class)]
 class ApiKey
@@ -14,21 +13,20 @@ class ApiKey
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user_query'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 400, nullable: true)]
+    #[ORM\Column(length: 400)]
+    #[Groups(['user_query'])]
     private ?string $token = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['user_query'])]
     private ?\DateTimeInterface $fechaExpiracion = null;
 
-    #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Usuario::class)]
-    private Collection $usuario;
-
-    public function __construct()
-    {
-        $this->usuario = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'apiKeys')]
+    #[ORM\JoinColumn(name: 'id_usuario',nullable: false)]
+    private ?Usuario $usuario = null;
 
     public function getId(): ?int
     {
@@ -40,7 +38,7 @@ class ApiKey
         return $this->token;
     }
 
-    public function setToken(?string $token): self
+    public function setToken(string $token): self
     {
         $this->token = $token;
 
@@ -52,39 +50,21 @@ class ApiKey
         return $this->fechaExpiracion;
     }
 
-    public function setFechaExpiracion(?\DateTimeInterface $fechaExpiracion): self
+    public function setFechaExpiracion(\DateTimeInterface $fechaExpiracion): self
     {
         $this->fechaExpiracion = $fechaExpiracion;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Usuario>
-     */
-    public function getUsuario(): Collection
+    public function getUsuario(): ?Usuario
     {
         return $this->usuario;
     }
 
-    public function addUsuario(Usuario $usuario): self
+    public function setUsuario(?Usuario $usuario): self
     {
-        if (!$this->usuario->contains($usuario)) {
-            $this->usuario->add($usuario);
-            $usuario->setIdUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUsuario(Usuario $usuario): self
-    {
-        if ($this->usuario->removeElement($usuario)) {
-            // set the owning side to null (unless already changed)
-            if ($usuario->getIdUsuario() === $this) {
-                $usuario->setIdUsuario(null);
-            }
-        }
+        $this->usuario = $usuario;
 
         return $this;
     }

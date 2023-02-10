@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Entity\Perfil;
+use App\Entity\Usuario;
 
 class PerfilDto
 {

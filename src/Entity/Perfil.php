@@ -13,81 +13,28 @@ class Perfil
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user_query'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 150, nullable: true)]
+    #[ORM\Column(length: 150)]
+    #[Groups(['user_query'])]
     private ?string $nombre = null;
 
-    #[ORM\Column(length: 200, nullable: true)]
+    #[ORM\Column(length: 150)]
+    #[Groups(['user_query'])]
     private ?string $apellidos = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['user_query'])]
     private ?\DateTimeInterface $fechaNacimiento = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $genero = null;
+    #[ORM\Column]
+    #[Groups(['user_query'])]
+    private ?int $sexo = null;
 
     #[ORM\OneToOne(inversedBy: 'perfil', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'id_usuario',nullable: false)]
     private ?Usuario $usuario = null;
-
-    #[ORM\Column(length: 400)]
-    #[Groups(['user_query'])]
-    private ?string $correo = null;
-
-    /**
-     * @return string|null
-     */
-    public function getCorreo(): ?string
-    {
-        return $this->correo;
-    }
-
-    /**
-     * @param string|null $correo
-     */
-    public function setCorreo(?string $correo): void
-    {
-        $this->correo = $correo;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getImagen(): ?string
-    {
-        return $this->imagen;
-    }
-
-    /**
-     * @param string|null $imagen
-     */
-    public function setImagen(?string $imagen): void
-    {
-        $this->imagen = $imagen;
-    }
-
-    #[ORM\Column(length: 400)]
-    #[Groups(['user_query'])]
-    private ?string $imagen = null;
-
-
-
-    /**
-     * @return Usuario|null
-     */
-    public function getUsuario(): ?Usuario
-    {
-        return $this->usuario;
-    }
-
-    /**
-     * @param Usuario|null $usuario
-     */
-    public function setUsuario(?Usuario $usuario): void
-    {
-        $this->usuario = $usuario;
-    }
 
     public function getId(): ?int
     {
@@ -99,7 +46,7 @@ class Perfil
         return $this->nombre;
     }
 
-    public function setNombre(?string $nombre): self
+    public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
 
@@ -111,7 +58,7 @@ class Perfil
         return $this->apellidos;
     }
 
-    public function setApellidos(?string $apellidos): self
+    public function setApellidos(string $apellidos): self
     {
         $this->apellidos = $apellidos;
 
@@ -123,22 +70,36 @@ class Perfil
         return $this->fechaNacimiento;
     }
 
-    public function setFechaNacimiento(?\DateTimeInterface $fechaNacimiento): self
+    public function setFechaNacimiento(\DateTimeInterface $fechaNacimiento): self
     {
         $this->fechaNacimiento = $fechaNacimiento;
 
         return $this;
     }
 
-    public function getGenero(): ?int
+    public function getSexo(): ?int
     {
-        return $this->genero;
+        return $this->sexo;
     }
 
-    public function setGenero(?int $genero): self
+    public function setSexo(int $sexo): self
     {
-        $this->genero = $genero;
+        $this->sexo = $sexo;
 
         return $this;
     }
+
+    public function getUsuario(): ?Usuario
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(Usuario $usuario): self
+    {
+        $this->usuario = $usuario;
+
+        return $this;
+    }
+
+
 }

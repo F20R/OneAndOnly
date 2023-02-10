@@ -6,6 +6,7 @@ use App\Repository\RolRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RolRepository::class)]
 class Rol
@@ -13,15 +14,18 @@ class Rol
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user_query'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $identificador = null;
+    #[ORM\Column(length: 100)]
+    #[Groups(['user_query'])]
+    private ?string $identidicador = null;
 
-    #[ORM\Column(length: 200, nullable: true)]
+    #[ORM\Column(length: 150)]
+    #[Groups(['user_query'])]
     private ?string $descripcion = null;
 
-    #[ORM\OneToMany(mappedBy: 'id_rol', targetEntity: Usuario::class)]
+    #[ORM\OneToMany(mappedBy: 'rol', targetEntity: Usuario::class, orphanRemoval: true)]
     private Collection $usuarios;
 
     public function __construct()
@@ -34,14 +38,14 @@ class Rol
         return $this->id;
     }
 
-    public function getIdentificador(): ?string
+    public function getIdentidicador(): ?string
     {
-        return $this->identificador;
+        return $this->identidicador;
     }
 
-    public function setIdentificador(?string $identificador): self
+    public function setIdentidicador(string $identidicador): self
     {
-        $this->identificador = $identificador;
+        $this->identidicador = $identidicador;
 
         return $this;
     }
@@ -51,7 +55,7 @@ class Rol
         return $this->descripcion;
     }
 
-    public function setDescripcion(?string $descripcion): self
+    public function setDescripcion(string $descripcion): self
     {
         $this->descripcion = $descripcion;
 
@@ -70,7 +74,7 @@ class Rol
     {
         if (!$this->usuarios->contains($usuario)) {
             $this->usuarios->add($usuario);
-            $usuario->setIdRol($this);
+            $usuario->setRol($this);
         }
 
         return $this;
@@ -80,8 +84,8 @@ class Rol
     {
         if ($this->usuarios->removeElement($usuario)) {
             // set the owning side to null (unless already changed)
-            if ($usuario->getIdRol() === $this) {
-                $usuario->setIdRol(null);
+            if ($usuario->getRol() === $this) {
+                $usuario->setRol(null);
             }
         }
 

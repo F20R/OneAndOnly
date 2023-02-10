@@ -37,11 +37,6 @@ class Usuario implements PasswordAuthenticatedUserInterface
     private ?Rol $rol = null;
 
 
-    /**
-     * @return string|null
-     */
-
-
     public function __construct()
     {
         $this->publicaciones = new ArrayCollection();

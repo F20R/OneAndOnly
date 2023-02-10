@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Dto\LoginDto;
+use App\DTO\LoginDto;
 use App\Entity\ApiKey;
-use App\Entity\Rol;
 use App\Entity\Usuario;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
