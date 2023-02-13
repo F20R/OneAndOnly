@@ -8,11 +8,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MensajeRepository::class)]
-#[ORM\Table(name: 'mensaje', schema: 'kpasadb')]
 class Mensaje
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -27,6 +26,13 @@ class Mensaje
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getDescripcion(): ?string
     {
         return $this->descripcion;
@@ -39,9 +45,9 @@ class Mensaje
         return $this;
     }
 
-    public function getFecha(): string
+    public function getFecha(): ?DateTime
     {
-        return $this->fecha->format('Y-m-d H:i:s');;
+        return $this->fecha;
     }
 
     public function setFecha(DateTime $fecha): self

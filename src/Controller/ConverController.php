@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UsuarioController extends AbstractController
+class ConverController extends AbstractController
 {
 
     private ManagerRegistry $doctrine;
@@ -31,19 +31,9 @@ class UsuarioController extends AbstractController
     }
 
 
-    #[OA\Tag(name: 'Usuarios')]
-    #[Route('/api/usuario', name: 'app_usuario', methods: ["GET"])]
-    public function index(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/UsuarioController.php',
-        ]);
-    }
 
-    #[Route('/api/usuario/list', name: 'app_usuario_listar', methods: ['GET'])]
-    #[OA\Tag(name: 'Usuarios')]
-    #[Security(name: "apikey")]
+    #[Route('/conversacion/list', name: 'app_conversacion_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Conversaciones')]
     #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
     public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils, Request $request): JsonResponse
     {

@@ -2,26 +2,26 @@
 
 namespace App\Controller;
 
-use App\Entity\ApiKey;
-use App\Entity\Usuario;
+use App\Entity\Mensaje;
 use App\Repository\MensajeRepository;
-use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 
 
 class MensajeController extends AbstractController
 {
-    private ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this-> doctrine = $managerRegistry;
-    }
+    public function __construct(private ManagerRegistry $doctrine) {}
+
 
 
     #[Route('/mensaje', name: 'app_mensaje')]
@@ -33,35 +33,67 @@ class MensajeController extends AbstractController
         ]);
     }
 
-    #[Route('/api/mensaje/list', name: 'app_mensaje', methods: ["GET"])]
-    #[OA\Tag(name: 'Mensajes')]
-    #[OA\Parameter(name: 'api_key', description: "Api de autentificación", in: "query", required: true, schema: new OA\Schema(type: "string") )]
-    public function listar(Request $request, MensajeRepository $mensajeRepository, Utils $utils): JsonResponse
+    #[Route('/mensaje/list', name: 'app_mensaje_listar')]
+    public function listar(Request $request, MensajeRepository $mensajeRepository): JsonResponse
     {
+        $listMensajes = $mensajeRepository->findAll();
 
-        //CARGAR REPOSITORIOS
-        $em = $this-> doctrine->getManager();
-        $userRepository = $em->getRepository(Usuario::class);
-        $apikeyRepository = $em->getRepository(ApiKey::class);
+        $listJson = $this->toJson($listMensajes);
 
-        $apikey = $request->query->get("api_key");
-        $compruebaAcceso = $utils->esApiKeyValida($apikey, "USER", $apikeyRepository, $userRepository);
+        return new JsonResponse($listJson, 200, [], true);
 
-
-        if ($compruebaAcceso) {
-
-            $listMensajes = $mensajeRepository->findAll();
-
-            $listJson = $utils->toJson($listMensajes, null);
-
-            return new JsonResponse($listJson, 200, [], true);
-
-        } else {
-            return $this->json([
-                'message' => "No tiene permiso",
-            ]);
-        }
     }
 
+
+    #[Route('/mensaje/save', name: 'app_mensaje_save', methods: ['POST'])]
+    public function save(Request $request):JsonResponse
+    {
+        $json = json_decode($request->getContent(), true);
+
+        $mensaje = new Mensaje();
+        $mensaje->setDescripcion($json['descripcion']);
+        $now = new \DateTime("now");
+        $mensaje->setFecha($now);
+
+        $em = $this->doctrine->getManager();
+        $em->persist($mensaje);
+        $em->flush();
+
+        return new JsonResponse("{ mensaje: Mensaje creado correctamente}", 200, [], true);
+
+    }
+
+    #[Route('/mensaje/remove/{id}', name: 'app_mensaje_remove', methods: ['DELETE'])]
+    public function remove(Request $request, MensajeRepository $mensajeRepository, int $id):JsonResponse
+    {
+
+        $criteria = array('id' => $id);
+        $mensajeEliminar = $mensajeRepository-> findBy($criteria);
+
+        if($mensajeEliminar != null){
+            $em = $this->doctrine->getManager();
+            $em->remove($mensajeEliminar[0]);
+            $em->flush();
+            return new JsonResponse("{ mensaje: Mensaje eliminado correctamente}", 200, [], true);
+        } else {
+            return new JsonResponse("{ mensaje: No se ha encontrado el mensaje}", 151, [], true);
+        }
+
+
+    }
+
+
+    public function toJson($data): string
+    {
+        //Inicialización de serializador
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
+        //Conversion a JSON
+        $json = $serializer->serialize($data, 'json');
+
+        return $json;
+    }
 
 }

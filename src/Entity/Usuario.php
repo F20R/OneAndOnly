@@ -36,11 +36,19 @@ class Usuario implements PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(name:'id_rol', nullable: false)]
     private ?Rol $rol = null;
 
+    #[ORM\ManyToMany(targetEntity: Contacto::class, mappedBy: 'id_Usuario')]
+    private Collection $contactos;
+
+    #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Conversacion::class)]
+    private Collection $conversacions;
+
 
     public function __construct()
     {
         $this->publicaciones = new ArrayCollection();
         $this->apiKeys = new ArrayCollection();
+        $this->contactos = new ArrayCollection();
+        $this->conversacions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,6 +135,63 @@ class Usuario implements PasswordAuthenticatedUserInterface
     public function setRol(?Rol $rol): self
     {
         $this->rol = $rol;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contacto>
+     */
+    public function getContactos(): Collection
+    {
+        return $this->contactos;
+    }
+
+    public function addContacto(Contacto $contacto): self
+    {
+        if (!$this->contactos->contains($contacto)) {
+            $this->contactos->add($contacto);
+            $contacto->addIdUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContacto(Contacto $contacto): self
+    {
+        if ($this->contactos->removeElement($contacto)) {
+            $contacto->removeIdUsuario($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversacion>
+     */
+    public function getConversacions(): Collection
+    {
+        return $this->conversacions;
+    }
+
+    public function addConversacion(Conversacion $conversacion): self
+    {
+        if (!$this->conversacions->contains($conversacion)) {
+            $this->conversacions->add($conversacion);
+            $conversacion->setIdUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversacion(Conversacion $conversacion): self
+    {
+        if ($this->conversacions->removeElement($conversacion)) {
+            // set the owning side to null (unless already changed)
+            if ($conversacion->getIdUsuario() === $this) {
+                $conversacion->setIdUsuario(null);
+            }
+        }
 
         return $this;
     }
