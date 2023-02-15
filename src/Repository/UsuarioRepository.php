@@ -39,6 +39,7 @@ class UsuarioRepository extends ServiceEntityRepository
         }
     }
 
+
 //    /**
 //     * @return Usuario[] Returns an array of Usuario objects
 //     */

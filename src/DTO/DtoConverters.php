@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\Entity\Contacto;
 use App\Entity\Perfil;
 use App\Entity\Usuario;
 
@@ -24,9 +25,9 @@ class DtoConverters
     /**
      * @param Usuario $usuario
      */
-    public function usuarioToDto(Usuario $usuario):UserDto
+    public function usuarioToDto(Usuario $usuario):UserDTO
     {
-        $usuarioDto = new UserDto();
+        $usuarioDto = new UserDTO();
         $usuarioDto->setId($usuario->getId());
         $usuarioDto->setUsername($usuario->getUsername());
         $usuarioDto->setRolName($usuario->getRol()->getDescripcion());
@@ -35,6 +36,21 @@ class DtoConverters
         }
 
         return $usuarioDto;
+
+    }
+
+    /**
+     * @param Contacto $contacto
+     */
+
+    public function contactoToDto(Contacto $contacto):ContactoDTO
+    {
+        $contactoDto = new ContactoDTO();
+        $contactoDto->setId($contacto->getId());
+        $contactoDto->setNombre($contacto->getNombre());
+        $contactoDto->setNombreUsuario($contacto->getNombreUsuario());
+
+        return $contactoDto;
 
     }
 

@@ -51,23 +51,18 @@ class ContactoController extends AbstractController
     public function listar(ContactoRepository $contactoRepository, DtoConverters $converters, Utils $utils, Request $request): JsonResponse
     {
 
-        if($utils->comprobarPermisos($request, "USER")){
-            $listContactos= $contactoRepository->findAll();
 
-            $listJson = array();
+        $listContactos= $contactoRepository->findAll();
 
-            foreach($listContactos as $user){
-                $usarioDto = $converters-> usuarioToDto($user);
-                $json = $utils->toJson($usarioDto,null);
-                $listJson[] = json_decode($json);
-            }
+        $listJson = array();
 
-
-            return new JsonResponse($listJson, 200,[],false);
-        }else{
-            return new JsonResponse("{ message: Unauthorized}", 401,[],false);
-
+        foreach ($listContactos as $contacto) {
+            $contactoDto = $converters->contactoToDto($contacto);
+            $json = $utils->toJson($contactoDto, null);
+            $listJson[] = json_decode($json);
         }
+
+        return new JsonResponse($listJson,200,[],false);
 
 
 
@@ -119,9 +114,37 @@ class ContactoController extends AbstractController
     }
 
 
+    #[Route('/api/contacto/delete', name: 'app_contacto_delete', methods: ['GET'])]
+    #[OA\Tag(name: 'Usuarios')]
+    public function eliminar(Request $request): JsonResponse
+    {
+
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $contactoRepository = $em->getRepository(Contacto::class);
+        $apiKeyRepository = $em->getRepository(ApiKey::class);
 
 
 
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
+        $contactoid = $json['id'];
+        $contacto = $contactoRepository-> findOneBy(array('id' =>$contactoid));
+        $apikey = $apiKeyRepository->findOneBy(array('usuario' => $contacto));
+
+
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        if($contacto != null) {
+            if ($contactoid == $contacto->getId()){
+                $apiKeyRepository -> remove($apikey , true);
+                $contactoRepository -> remove($contacto , true);
+                return new JsonResponse("{mensaje : Contacto eliminado correctamente }", 200, [], true);
+            }
+        }
+
+        return new JsonResponse("{mensaje : El contacto que intenta eliminar no existe }", 409,[], true);
+
+    }
 
 
 }

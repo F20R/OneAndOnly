@@ -18,6 +18,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UsuarioController extends AbstractController
@@ -45,29 +46,20 @@ class UsuarioController extends AbstractController
     #[OA\Tag(name: 'Usuarios')]
     #[Security(name: "apikey")]
     #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
-    public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils, Request $request): JsonResponse
+    public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils): JsonResponse
     {
 
-        if($utils->comprobarPermisos($request, "USER")){
-            $listUsuarios= $usuarioRepository->findAll();
+        $listUsuarios = $usuarioRepository->findAll();
 
-            $listJson = array();
+        $listJson = array();
 
-            foreach($listUsuarios as $user){
-                $usarioDto = $converters-> usuarioToDto($user);
-                $json = $utils->toJson($usarioDto,null);
-                $listJson[] = json_decode($json);
-            }
-
-
-            return new JsonResponse($listJson, 200,[],false);
-        }else{
-            return new JsonResponse("{ message: Unauthorized}", 401,[],false);
-
+        foreach ($listUsuarios as $user) {
+            $userDTO = $converters->usuarioToDto($user);
+            $json = $utils->toJson($userDTO, null);
+            $listJson[] = json_decode($json);
         }
 
-
-
+        return new JsonResponse($listJson,200,[],false);
 
     }
 
@@ -157,30 +149,6 @@ class UsuarioController extends AbstractController
         }
 
     }
-
-    #[Route('/usuario/remove/{id}', name: 'app_usuario_remove', methods: ['DELETE'])]
-    public function remove(UsuarioRepository $usuarioRepository, int $id):JsonResponse
-    {
-
-        $criteria = array('id' => $id);
-        $usuarioEliminar = $usuarioRepository-> findBy($criteria);
-
-        if($usuarioEliminar != null){
-            $em = $this->doctrine->getManager();
-            $em->remove($usuarioEliminar[0]);
-            $em->flush();
-            return new JsonResponse("{ mensaje: usuario eliminado correctamente}", 200, [], true);
-        } else {
-            return new JsonResponse("{ mensaje: No se ha encontrado el usuario}", 151, [], true);
-        }
-
-
-    }
-
-
-
-
-
 
 
 }
