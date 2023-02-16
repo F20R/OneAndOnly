@@ -42,6 +42,9 @@ class Usuario implements PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Conversacion::class)]
     private Collection $conversacions;
 
+    #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Galeria::class)]
+    private Collection $galerias;
+
 
     public function __construct()
     {
@@ -49,6 +52,7 @@ class Usuario implements PasswordAuthenticatedUserInterface
         $this->apiKeys = new ArrayCollection();
         $this->contactos = new ArrayCollection();
         $this->conversacions = new ArrayCollection();
+        $this->galerias = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +194,36 @@ class Usuario implements PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($conversacion->getIdUsuario() === $this) {
                 $conversacion->setIdUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Galeria>
+     */
+    public function getGalerias(): Collection
+    {
+        return $this->galerias;
+    }
+
+    public function addGaleria(Galeria $galeria): self
+    {
+        if (!$this->galerias->contains($galeria)) {
+            $this->galerias->add($galeria);
+            $galeria->setIdUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGaleria(Galeria $galeria): self
+    {
+        if ($this->galerias->removeElement($galeria)) {
+            // set the owning side to null (unless already changed)
+            if ($galeria->getIdUsuario() === $this) {
+                $galeria->setIdUsuario(null);
             }
         }
 

@@ -39,11 +39,11 @@ class RolRepository extends ServiceEntityRepository
         }
     }
 
-    public function findOneByIdentificador($descripcion): ?Rol
+    public function findOneByIdentificador($identificador): ?Rol
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.descripcion = :val')
-            ->setParameter('val', $descripcion)
+            ->andWhere('r.identidicador = :val')
+            ->setParameter('val', $identificador)
             ->getQuery()
             ->getOneOrNullResult()
             ;

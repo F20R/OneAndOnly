@@ -64,4 +64,14 @@ class UsuarioRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findOneByUsername($username): ?Usuario
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.username = :val')
+            ->setParameter('val', $username)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }

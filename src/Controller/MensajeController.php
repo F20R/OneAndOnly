@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\ApiKey;
+use App\Entity\Contacto;
 use App\Entity\Mensaje;
 use App\Repository\MensajeRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,22 +65,33 @@ class MensajeController extends AbstractController
 
     }
 
-    #[Route('/mensaje/remove/{id}', name: 'app_mensaje_remove', methods: ['DELETE'])]
-    public function remove(Request $request, MensajeRepository $mensajeRepository, int $id):JsonResponse
+    #[Route('/api/mensaje/delete', name: 'app_mensaje_delete', methods: ['GET'])]
+    #[OA\Tag(name: 'Mensajes')]
+    public function eliminar(Request $request): JsonResponse
     {
 
-        $criteria = array('id' => $id);
-        $mensajeEliminar = $mensajeRepository-> findBy($criteria);
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $mensajeRepository = $em->getRepository(Mensaje::class);
 
-        if($mensajeEliminar != null){
-            $em = $this->doctrine->getManager();
-            $em->remove($mensajeEliminar[0]);
-            $em->flush();
-            return new JsonResponse("{ mensaje: Mensaje eliminado correctamente}", 200, [], true);
-        } else {
-            return new JsonResponse("{ mensaje: No se ha encontrado el mensaje}", 151, [], true);
+
+
+
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
+        $mensajeid = $json['id'];
+        $mensaje = $mensajeRepository-> findOneBy(array('id' =>$mensajeid));
+
+
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        if($mensaje != null) {
+            if ($mensajeid == $mensaje->getId()){
+                $mensajeRepository -> remove($mensaje , true);
+                return new JsonResponse("{mensaje : Mensaje eliminado correctamente }", 200, [], true);
+            }
         }
 
+        return new JsonResponse("{mensaje : El mensaje que intenta eliminar no existe }", 409,[], true);
 
     }
 

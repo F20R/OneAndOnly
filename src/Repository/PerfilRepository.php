@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Perfil;
+use App\Entity\Rol;
+use App\Entity\Usuario;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -63,4 +65,8 @@ class PerfilRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
+
+
 }

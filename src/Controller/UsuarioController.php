@@ -129,7 +129,7 @@ class UsuarioController extends AbstractController
             //GESTION DEL ROL
             if ($rolname == null) {
                 //Obtenemos el rol de usuario por defecto
-                $rolUser = $rolRepository->findOneByIdentificador("R_02");
+                $rolUser = $rolRepository->findOneByIdentificador("USER");
                 $usuarioNuevo->setRol($rolUser);
 
             } else {

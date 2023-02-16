@@ -24,9 +24,9 @@ class Perfil
     #[Groups(['user_query'])]
     private ?string $apellidos = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column]
     #[Groups(['user_query'])]
-    private ?\DateTimeInterface $fechaNacimiento = null;
+    private ?int $edad = null;
 
     #[ORM\Column]
     #[Groups(['user_query'])]
@@ -36,70 +36,103 @@ class Perfil
     #[ORM\JoinColumn(name: 'id_usuario',nullable: false)]
     private ?Usuario $usuario = null;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getNombre(): ?string
     {
         return $this->nombre;
     }
 
-    public function setNombre(string $nombre): self
+    /**
+     * @param string|null $nombre
+     */
+    public function setNombre(?string $nombre): void
     {
         $this->nombre = $nombre;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getApellidos(): ?string
     {
         return $this->apellidos;
     }
 
-    public function setApellidos(string $apellidos): self
+    /**
+     * @param string|null $apellidos
+     */
+    public function setApellidos(?string $apellidos): void
     {
         $this->apellidos = $apellidos;
-
-        return $this;
     }
 
-    public function getFechaNacimiento(): ?\DateTimeInterface
+    /**
+     * @return int|null
+     */
+    public function getEdad(): ?int
     {
-        return $this->fechaNacimiento;
+        return $this->edad;
     }
 
-    public function setFechaNacimiento(\DateTimeInterface $fechaNacimiento): self
+    /**
+     * @param int|null $edad
+     */
+    public function setEdad(?int $edad): void
     {
-        $this->fechaNacimiento = $fechaNacimiento;
-
-        return $this;
+        $this->edad = $edad;
     }
 
+    /**
+     * @return int|null
+     */
     public function getSexo(): ?int
     {
         return $this->sexo;
     }
 
-    public function setSexo(int $sexo): self
+    /**
+     * @param int|null $sexo
+     */
+    public function setSexo(?int $sexo): void
     {
         $this->sexo = $sexo;
-
-        return $this;
     }
 
+    /**
+     * @return Usuario|null
+     */
     public function getUsuario(): ?Usuario
     {
         return $this->usuario;
     }
 
-    public function setUsuario(Usuario $usuario): self
+    /**
+     * @param Usuario|null $usuario
+     */
+    public function setUsuario(?Usuario $usuario): void
     {
         $this->usuario = $usuario;
-
-        return $this;
     }
+
+
 
 
 }
