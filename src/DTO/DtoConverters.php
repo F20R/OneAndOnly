@@ -3,7 +3,9 @@
 namespace App\DTO;
 
 use App\Entity\Contacto;
+use App\Entity\Conversacion;
 use App\Entity\Galeria;
+use App\Entity\Mensaje;
 use App\Entity\Perfil;
 use App\Entity\Usuario;
 
@@ -69,6 +71,35 @@ class DtoConverters
         $contactoDto->setNombreUsuario($contacto->getNombreUsuario());
 
         return $contactoDto;
+
+    }
+
+    public function mensajeToDto(Mensaje $mensaje):MensajeDTO
+    {
+        $mensajeDto = new MensajeDTO();
+        $mensajeDto->setId($mensaje->getId());
+        $mensajeDto->setDescripcion($mensaje->getDescripcion());
+        $mensajeDto->setFecha($mensaje->getFecha());
+
+        return $mensajeDto;
+
+    }
+
+    public function converToDto(Conversacion $conversacion):ConversacionDTO
+    {
+        $converDto = new ConversacionDTO();
+        $converDto->setId($conversacion->getId());
+        if($conversacion->getIdUsuario()!=null){
+            $converDto->setUserDTO($this->usuarioToDto($conversacion->getIdUsuario()));
+        }
+        if($conversacion->getIdMensaje()!=null){
+            $converDto->setMensajeDTO($this->mensajeToDto($conversacion->getIdMensaje()));
+        }
+        if($conversacion->getIdContacto()!=null){
+            $converDto->setContactoDTO($this->contactoToDto($conversacion->getIdContacto()));
+        }
+
+        return $converDto;
 
     }
 

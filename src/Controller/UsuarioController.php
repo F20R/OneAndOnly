@@ -76,24 +76,26 @@ class UsuarioController extends AbstractController
                                     Request $request,
                                     DtoConverters $converters): JsonResponse
     {
-        $nombre = $request->query->get("nombre");
 
-        $parametrosBusqueda = array(
-            'username' => $nombre
-        );
+        $em = $this->doctrine->getManager();
+        $usuarioRepository = $em->getRepository(Usuario::class);
 
-        $listUsuarios = $usuarioRepository->findBy($parametrosBusqueda);
+        $username = $request-> query->get("username");
+        $user = $usuarioRepository ->findOneBy(array("username" => $username));
 
         $listJson = array();
 
-        foreach($listUsuarios as $user){
-            $usarioDto = $converters-> usuarioToDto($user);
-            $json = $utils->toJson($usarioDto,null);
+        if ($user){
+            $userDTO = $converters->usuarioToDto($user);
+            $json = $utils->toJson($userDTO, null);
             $listJson[] = json_decode($json);
+            return new JsonResponse($listJson , 200,[], false);
         }
 
-        return new JsonResponse($listJson, 200,[],false);
+        return new JsonResponse($listJson,200,[],false);
+
     }
+
 
     #[Route('/api/usuario/save', name: 'app_usuario_crear', methods: ['POST'])]
     #[OA\Tag(name: 'Usuarios')]
