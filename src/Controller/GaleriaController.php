@@ -11,6 +11,7 @@ use App\Entity\Contacto;
 use App\Entity\Galeria;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\GaleriaRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,20 +37,20 @@ class GaleriaController extends AbstractController
 
 
 
-    #[Route('/api/usuario/list', name: 'app_usuario_listar', methods: ['GET'])]
-    #[OA\Tag(name: 'Usuarios')]
+    #[Route('/api/galeria/list', name: 'app_galeria_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Galeria')]
     #[Security(name: "apikey")]
-    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
-    public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils): JsonResponse
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: GaleriaDTO::class))))]
+    public function listar(GaleriaRepository $galeriaRepository, DtoConverters $converters, Utils $utils): JsonResponse
     {
 
-        $listUsuarios = $usuarioRepository->findAll();
+        $listGaleria = $galeriaRepository->findAll();
 
         $listJson = array();
 
-        foreach ($listUsuarios as $user) {
-            $userDTO = $converters->usuarioToDto($user);
-            $json = $utils->toJson($userDTO, null);
+        foreach ($listGaleria as $galeria) {
+            $galeriaDTO = $converters->galeriaToDto($galeria);
+            $json = $utils->toJson($galeriaDTO, null);
             $listJson[] = json_decode($json);
         }
 

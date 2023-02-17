@@ -6,6 +6,7 @@ use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
+use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
 use App\Repository\UsuarioRepository;
@@ -147,6 +148,38 @@ class UsuarioController extends AbstractController
         }else{
             return new JsonResponse("No ha indicado usario y contraseña", 101, [], true);
         }
+
+    }
+
+    #[Route('/api/usuario/delete', name: 'app_usuario_delete', methods: ['GET'])]
+    #[OA\Tag(name: 'Usuarios')]
+    public function eliminar(Request $request): JsonResponse
+    {
+
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $userRepository = $em->getRepository(Usuario::class);
+        $apiKeyRepository = $em->getRepository(ApiKey::class);
+
+
+
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
+        $userid = $json['username'];
+        $usuario = $userRepository-> findOneBy(array('username' =>$userid));
+        $apikey = $apiKeyRepository->findOneBy(array('usuario' => $usuario));
+
+
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        if($usuario != null) {
+            if ($userid == $usuario->getUsername()){
+                $apiKeyRepository -> remove($apikey , true);
+                $userRepository -> remove($usuario , true);
+                return new JsonResponse("{mensaje : Usuario eliminado correctamente }", 200, [], true);
+            }
+        }
+
+        return new JsonResponse("{mensaje : El usuario que intenta eliminar no existe }", 409,[], true);
 
     }
 

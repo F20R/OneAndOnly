@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Entity\Contacto;
+use App\Entity\Galeria;
 use App\Entity\Perfil;
 use App\Entity\Usuario;
 
@@ -16,7 +17,7 @@ class DtoConverters
     {
 
         $perfilDto = new PerfilDto($perfil->getId(),$perfil->getNombre(),
-            $perfil->getApellidos(),$perfil->getFechaNacimiento(),$perfil->getSexo(),$perfil->getUsuario()->getUsername());
+            $perfil->getApellidos(),$perfil->getEdad(),$perfil->getSexo(),$perfil->getUsuario()->getUsername());
 
         return $perfilDto;
     }
@@ -36,6 +37,23 @@ class DtoConverters
         }
 
         return $usuarioDto;
+
+    }
+
+    /**
+     * @param Galeria $galeria
+     */
+    public function galeriaToDto(Galeria $galeria):GaleriaDTO
+    {
+        $galeriaDto = new GaleriaDTO();
+        $galeriaDto->setId($galeria->getId());
+        $galeriaDto->setImagen($galeria->getImagen());
+        $galeriaDto->setDescripcion($galeria->getDescripcion());
+        if($galeria->getIdUsuario()!=null){
+            $galeriaDto->setUserDTO($this->usuarioToDto($galeria->getIdUsuario()));
+        }
+
+        return $galeriaDto;
 
     }
 

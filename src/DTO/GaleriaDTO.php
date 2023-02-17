@@ -5,6 +5,7 @@ namespace App\DTO;
 class GaleriaDTO
 {
 
+    private int $id;
     private string $imagen;
     private string $descripcion;
     private UserDTO $userDTO;
@@ -13,6 +14,22 @@ class GaleriaDTO
 
     public function __construct()
     {
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     /**
@@ -63,7 +80,9 @@ class GaleriaDTO
         $this->userDTO = $userDTO;
     }
 
-
+    /**
+     * @return string
+     */
 
 
 
