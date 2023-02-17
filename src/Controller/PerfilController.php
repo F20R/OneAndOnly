@@ -6,6 +6,7 @@ use App\DTO\CreateUserDto;
 use App\DTO\PerfilDto;
 use App\Entity\ApiKey;
 use App\Entity\Contacto;
+use App\Entity\Galeria;
 use App\Entity\Perfil;
 use App\Entity\Rol;
 use App\Entity\Usuario;
@@ -97,6 +98,7 @@ class PerfilController extends AbstractController
         }
 
     }
+
 
 
 }
