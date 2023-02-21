@@ -83,6 +83,7 @@ class ContactoController extends AbstractController
         //CARGA DATOS
         $em = $this-> doctrine->getManager();
         $contactoRepository = $em->getRepository(Contacto::class);
+        $userRepository = $em->getRepository(Usuario::class);
 
 
         //Obtener Json del body y pasarlo a DTO
@@ -91,6 +92,7 @@ class ContactoController extends AbstractController
         //Obtenemos los parámetros del JSON
         $nombre = $json['nombre'];
         $nombreUsuario = $json['nombreUsuario'];
+        $usuario = $json['usuario'];
 
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
@@ -99,16 +101,25 @@ class ContactoController extends AbstractController
             $contactoNuevo->setNombre($nombre);
             $contactoNuevo->setNombreUsuario($nombreUsuario);
 
+            //GESTION DEL ROL
+            if ($nombre == null) {
+                //Obtenemos el rol de usuario por defecto
+                $contactoUser = $userRepository->findOneByUsername("antoniogp");
+                $contactoNuevo->setIdUsuario($contactoUser);
+
+            } else {
+                $usuario1 = $userRepository->findOneByUsername($usuario);
+                $contactoNuevo->setIdUsuario($usuario1);
+            }
 
 
             //GUARDAR
             $contactoRepository->save($contactoNuevo, true);
 
 
-
             return new JsonResponse("Contacto creado correctamente", 200, [], true);
         }else{
-            return new JsonResponse("No ha indicado nombre de usuario", 101, [], true);
+            return new JsonResponse("No ha indicado nombre y apellidos", 101, [], true);
         }
 
     }

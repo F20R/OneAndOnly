@@ -8,6 +8,7 @@ class MensajeDTO
     private $id;
     private  $descripcion;
     private $fecha  ;
+    private UserDTO $userDTO;
 
 
     /**
@@ -57,6 +58,23 @@ class MensajeDTO
     {
         $this->fecha = $fecha;
     }
+
+    /**
+     * @return UserDTO
+     */
+    public function getUserDTO(): UserDTO
+    {
+        return $this->userDTO;
+    }
+
+    /**
+     * @param UserDTO $userDTO
+     */
+    public function setUserDTO(UserDTO $userDTO): void
+    {
+        $this->userDTO = $userDTO;
+    }
+
 
 
 
