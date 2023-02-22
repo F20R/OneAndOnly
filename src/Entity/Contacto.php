@@ -24,8 +24,6 @@ class Contacto
     #[ORM\ManyToOne(inversedBy: 'contacto')]
     private ?Usuario $id_usuario = null;
 
-    #[ORM\OneToMany(mappedBy: 'id_contacto', targetEntity: Conversacion::class)]
-    private Collection $conversacions;
 
     public function __construct()
     {

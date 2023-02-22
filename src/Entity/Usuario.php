@@ -39,11 +39,12 @@ class Usuario implements PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Contacto::class, mappedBy: 'id_Usuario')]
     private Collection $contactos;
 
-    #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Conversacion::class)]
-    private Collection $conversacions;
 
     #[ORM\OneToMany(mappedBy: 'id_usuario', targetEntity: Galeria::class)]
     private Collection $galerias;
+
+    #[ORM\OneToMany(mappedBy: 'id_emisor', targetEntity: Chat::class)]
+    private Collection $chats;
 
 
     public function __construct()
@@ -53,6 +54,7 @@ class Usuario implements PasswordAuthenticatedUserInterface
         $this->contactos = new ArrayCollection();
         $this->conversacions = new ArrayCollection();
         $this->galerias = new ArrayCollection();
+        $this->chats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,35 +172,6 @@ class Usuario implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Conversacion>
-     */
-    public function getConversacions(): Collection
-    {
-        return $this->conversacions;
-    }
-
-    public function addConversacion(Conversacion $conversacion): self
-    {
-        if (!$this->conversacions->contains($conversacion)) {
-            $this->conversacions->add($conversacion);
-            $conversacion->setIdUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeConversacion(Conversacion $conversacion): self
-    {
-        if ($this->conversacions->removeElement($conversacion)) {
-            // set the owning side to null (unless already changed)
-            if ($conversacion->getIdUsuario() === $this) {
-                $conversacion->setIdUsuario(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Galeria>
@@ -224,6 +197,36 @@ class Usuario implements PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($galeria->getIdUsuario() === $this) {
                 $galeria->setIdUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Chat>
+     */
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
+
+    public function addChat(Chat $chat): self
+    {
+        if (!$this->chats->contains($chat)) {
+            $this->chats->add($chat);
+            $chat->setIdEmisor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChat(Chat $chat): self
+    {
+        if ($this->chats->removeElement($chat)) {
+            // set the owning side to null (unless already changed)
+            if ($chat->getIdEmisor() === $this) {
+                $chat->setIdEmisor(null);
             }
         }
 

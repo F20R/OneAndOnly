@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Conversacion;
+use App\Entity\Chat;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Conversacion>
+ * @extends ServiceEntityRepository<Chat>
  *
- * @method Conversacion|null find($id, $lockMode = null, $lockVersion = null)
- * @method Conversacion|null findOneBy(array $criteria, array $orderBy = null)
- * @method Conversacion[]    findAll()
- * @method Conversacion[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Chat|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Chat|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Chat[]    findAll()
+ * @method Chat[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ConversacionRepository extends ServiceEntityRepository
+class ChatRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Conversacion::class);
+        parent::__construct($registry, Chat::class);
     }
 
-    public function save(Conversacion $entity, bool $flush = false): void
+    public function save(Chat $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ConversacionRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Conversacion $entity, bool $flush = false): void
+    public function remove(Chat $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ConversacionRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Conversacion[] Returns an array of Conversacion objects
+//     * @return Chat[] Returns an array of Chat objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ConversacionRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Conversacion
+//    public function findOneBySomeField($value): ?Chat
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
@@ -63,4 +63,6 @@ class ConversacionRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
 }
