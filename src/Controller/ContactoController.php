@@ -104,7 +104,7 @@ class ContactoController extends AbstractController
             //GESTION DEL ROL
             if ($nombre == null) {
                 //Obtenemos el rol de usuario por defecto
-                $contactoUser = $userRepository->findOneByUsername("antoniogp");
+                $contactoUser = $userRepository->findOneByUsername("");
                 $contactoNuevo->setIdUsuario($contactoUser);
 
             } else {

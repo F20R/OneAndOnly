@@ -79,7 +79,7 @@ class PerfilController extends AbstractController
             //GESTION DEL ROL
             if ($usuario == null) {
                 //Obtenemos el rol de usuario por defecto
-                $perfilUser = $userRepository->findOneByUsername("antoniogp");
+                $perfilUser = $userRepository->findOneByUsername("");
                 $perfilNuevo->setUsuario($perfilUser);
 
             } else {

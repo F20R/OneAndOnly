@@ -81,7 +81,7 @@ class MensajeController extends AbstractController
             //GESTION DEL ROL
             if ($usuario == null) {
                 //Obtenemos el rol de usuario por defecto
-                $mensajeUser = $userRepository->findOneByUsername("antoniogp");
+                $mensajeUser = $userRepository->findOneByUsername("");
                 $mensajeNuevo->setIdUsuario($mensajeUser);
 
             } else {
