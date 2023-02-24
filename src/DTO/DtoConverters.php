@@ -49,10 +49,10 @@ class DtoConverters
         $chatDto->setMensaje($chat->getMensaje());
         $chatDto->setFecha($chat->getFecha());
         if($chat->getIdEmisor()!=null){
-            $chatDto->setUserDTO($this->usuarioToDto($chat->getIdEmisor()));
+            $chatDto->setEmisorDTO($this->usuarioToDto($chat->getIdEmisor()));
         }
         if($chat->getIdReceptor()!=null){
-            $chatDto->setUserDTO($this->usuarioToDto($chat->getIdReceptor()));
+            $chatDto->setReceptorDTO($this->usuarioToDto($chat->getIdReceptor()));
         }
 
         return $chatDto;

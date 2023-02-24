@@ -8,7 +8,8 @@ class ChatDTO
     private int $id;
     private  string $mensaje;
     private \DateTime $fecha  ;
-    private UserDTO $userDTO;
+    private UserDTO $emisorDTO;
+    private UserDTO $receptorDTO;
 
     /**
      * @return int
@@ -61,18 +62,36 @@ class ChatDTO
     /**
      * @return UserDTO
      */
-    public function getUserDTO(): UserDTO
+    public function getEmisorDTO(): UserDTO
     {
-        return $this->userDTO;
+        return $this->emisorDTO;
     }
 
     /**
-     * @param UserDTO $userDTO
+     * @param UserDTO $emisorDTO
      */
-    public function setUserDTO(UserDTO $userDTO): void
+    public function setEmisorDTO(UserDTO $emisorDTO): void
     {
-        $this->userDTO = $userDTO;
+        $this->emisorDTO = $emisorDTO;
     }
+
+    /**
+     * @return UserDTO
+     */
+    public function getReceptorDTO(): UserDTO
+    {
+        return $this->receptorDTO;
+    }
+
+    /**
+     * @param UserDTO $receptorDTO
+     */
+    public function setReceptorDTO(UserDTO $receptorDTO): void
+    {
+        $this->receptorDTO = $receptorDTO;
+    }
+
+
 
 
 
