@@ -21,6 +21,9 @@ class Contacto
     #[ORM\Column(length: 250, nullable: true)]
     private ?string $nombreUsuario = null;
 
+    #[ORM\Column(length: 250, nullable: true)]
+    private ?string $telefono = null;
+
     #[ORM\ManyToOne(inversedBy: 'contacto')]
     private ?Usuario $id_usuario = null;
 
@@ -142,4 +145,22 @@ class Contacto
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getTelefono(): ?string
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * @param string|null $telefono
+     */
+    public function setTelefono(?string $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
+
+
 }

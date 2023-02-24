@@ -92,6 +92,7 @@ class ContactoController extends AbstractController
         //Obtenemos los parámetros del JSON
         $nombre = $json['nombre'];
         $nombreUsuario = $json['nombreUsuario'];
+        $telefono = $json['telefono'];
         $usuario = $json['usuario'];
 
 
@@ -100,6 +101,7 @@ class ContactoController extends AbstractController
             $contactoNuevo = new Contacto();
             $contactoNuevo->setNombre($nombre);
             $contactoNuevo->setNombreUsuario($nombreUsuario);
+            $contactoNuevo->setTelefono($telefono);
 
             //GESTION DEL ROL
             if ($nombre == null) {

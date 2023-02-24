@@ -86,6 +86,7 @@ class DtoConverters
         $contactoDto->setId($contacto->getId());
         $contactoDto->setNombre($contacto->getNombre());
         $contactoDto->setNombreUsuario($contacto->getNombreUsuario());
+        $contactoDto->setTelefono($contacto->getTelefono());
 
         return $contactoDto;
 
