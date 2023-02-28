@@ -83,6 +83,7 @@ class ContactoController extends AbstractController
         //CARGA DATOS
         $em = $this-> doctrine->getManager();
         $contactoRepository = $em->getRepository(Contacto::class);
+        $userRepository = $em->getRepository(Usuario::class);
 
 
         //Obtener Json del body y pasarlo a DTO
@@ -91,6 +92,8 @@ class ContactoController extends AbstractController
         //Obtenemos los parámetros del JSON
         $nombre = $json['nombre'];
         $nombreUsuario = $json['nombreUsuario'];
+        $telefono = $json['telefono'];
+        $usuario = $json['usuario'];
 
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
@@ -98,23 +101,33 @@ class ContactoController extends AbstractController
             $contactoNuevo = new Contacto();
             $contactoNuevo->setNombre($nombre);
             $contactoNuevo->setNombreUsuario($nombreUsuario);
+            $contactoNuevo->setTelefono($telefono);
 
+            //GESTION DEL ROL
+            if ($nombre == null) {
+                //Obtenemos el rol de usuario por defecto
+                $contactoUser = $userRepository->findOneByUsername("");
+                $contactoNuevo->setIdUsuario($contactoUser);
+
+            } else {
+                $usuario1 = $userRepository->findOneByUsername($usuario);
+                $contactoNuevo->setIdUsuario($usuario1);
+            }
 
 
             //GUARDAR
             $contactoRepository->save($contactoNuevo, true);
 
 
-
             return new JsonResponse("Contacto creado correctamente", 200, [], true);
         }else{
-            return new JsonResponse("No ha indicado nombre de usuario", 101, [], true);
+            return new JsonResponse("No ha indicado nombre y apellidos", 101, [], true);
         }
 
     }
 
 
-    #[Route('/api/contacto/delete', name: 'app_contacto_delete', methods: ['GET'])]
+    #[Route('/api/contacto/delete', name: 'app_contacto_delete', methods: ['DELETE'])]
     #[OA\Tag(name: 'Usuarios')]
     public function eliminar(Request $request): JsonResponse
     {
@@ -122,7 +135,6 @@ class ContactoController extends AbstractController
         //CARGA DATOS
         $em = $this-> doctrine->getManager();
         $contactoRepository = $em->getRepository(Contacto::class);
-        $apiKeyRepository = $em->getRepository(ApiKey::class);
 
 
 
@@ -130,13 +142,11 @@ class ContactoController extends AbstractController
         $json = json_decode($request-> getContent(), true);
         $contactoid = $json['id'];
         $contacto = $contactoRepository-> findOneBy(array('id' =>$contactoid));
-        $apikey = $apiKeyRepository->findOneBy(array('usuario' => $contacto));
 
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
         if($contacto != null) {
             if ($contactoid == $contacto->getId()){
-                $apiKeyRepository -> remove($apikey , true);
                 $contactoRepository -> remove($contacto , true);
                 return new JsonResponse("{mensaje : Contacto eliminado correctamente }", 200, [], true);
             }

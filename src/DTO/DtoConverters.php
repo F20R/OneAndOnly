@@ -2,8 +2,10 @@
 
 namespace App\DTO;
 
+use App\Entity\Chat;
 use App\Entity\Contacto;
 use App\Entity\Galeria;
+use App\Entity\Mensaje;
 use App\Entity\Perfil;
 use App\Entity\Usuario;
 
@@ -40,6 +42,23 @@ class DtoConverters
 
     }
 
+    public function chatToDto(Chat $chat):ChatDTO
+    {
+        $chatDto = new ChatDTO();
+        $chatDto->setId($chat->getId());
+        $chatDto->setMensaje($chat->getMensaje());
+        $chatDto->setFecha($chat->getFecha());
+        if($chat->getIdEmisor()!=null){
+            $chatDto->setEmisorDTO($this->usuarioToDto($chat->getIdEmisor()));
+        }
+        if($chat->getIdReceptor()!=null){
+            $chatDto->setReceptorDTO($this->usuarioToDto($chat->getIdReceptor()));
+        }
+
+        return $chatDto;
+
+    }
+
     /**
      * @param Galeria $galeria
      */
@@ -67,8 +86,20 @@ class DtoConverters
         $contactoDto->setId($contacto->getId());
         $contactoDto->setNombre($contacto->getNombre());
         $contactoDto->setNombreUsuario($contacto->getNombreUsuario());
+        $contactoDto->setTelefono($contacto->getTelefono());
 
         return $contactoDto;
+
+    }
+
+    public function mensajeToDto(Mensaje $mensaje):MensajeDTO
+    {
+        $mensajeDto = new MensajeDTO();
+        $mensajeDto->setId($mensaje->getId());
+        $mensajeDto->setDescripcion($mensaje->getDescripcion());
+        $mensajeDto->setFecha($mensaje->getFecha());
+
+        return $mensajeDto;
 
     }
 

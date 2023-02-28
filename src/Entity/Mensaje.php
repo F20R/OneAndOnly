@@ -21,6 +21,9 @@ class Mensaje
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTime $fecha = null;
 
+    #[ORM\ManyToOne(inversedBy: 'mensaje')]
+    private ?Usuario $id_usuario = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -56,4 +59,22 @@ class Mensaje
 
         return $this;
     }
+
+    /**
+     * @return Usuario|null
+     */
+    public function getIdUsuario(): ?Usuario
+    {
+        return $this->id_usuario;
+    }
+
+    /**
+     * @param Usuario|null $id_usuario
+     */
+    public function setIdUsuario(?Usuario $id_usuario): void
+    {
+        $this->id_usuario = $id_usuario;
+    }
+
+
 }

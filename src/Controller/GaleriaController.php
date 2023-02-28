@@ -92,7 +92,7 @@ class GaleriaController extends AbstractController
             //GESTION DEL ROL
             if ($usuario == null) {
                 //Obtenemos el rol de usuario por defecto
-                $galeriaUser = $userRepository->findOneByUsername("antoniogp");
+                $galeriaUser = $userRepository->findOneByUsername("");
                 $galeriaNuevo->setIdUsuario($galeriaUser);
 
             } else {

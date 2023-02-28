@@ -19,6 +19,9 @@ class Conversacion
     #[ORM\ManyToOne(inversedBy: 'conversacions')]
     private ?Contacto $id_contacto = null;
 
+    #[ORM\ManyToOne(inversedBy: 'conversacions')]
+    private ?Mensaje $id_mensaje = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -47,4 +50,25 @@ class Conversacion
 
         return $this;
     }
+
+    /**
+     * @return Mensaje|null
+     */
+    public function getIdMensaje(): ?Mensaje
+    {
+        return $this->id_mensaje;
+    }
+
+    /**
+     * @param Mensaje|null $id_mensaje
+     */
+    public function setIdMensaje(?Mensaje $id_mensaje): void
+    {
+        $this->id_mensaje = $id_mensaje;
+    }
+
+
+
+
+
 }

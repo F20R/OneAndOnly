@@ -7,6 +7,7 @@ class ContactoDTO
     private int $id ;
     private string $nombre ;
     private  string $nombre_usuario;
+    private  string $telefono;
     private  UserDTO $userDTO;
 
     public function __construct()
@@ -60,6 +61,18 @@ class ContactoDTO
     {
         $this->nombre_usuario = $nombre_usuario;
     }
+    public function getTelefono(): string
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * @param string $telefono
+     */
+    public function setTelefono(string $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
 
     /**
      * @return UserDTO
@@ -77,12 +90,9 @@ class ContactoDTO
         $this->userDTO = $userDTO;
     }
 
-
-
-
-
-
-
+    /**
+     * @return string
+     */
 
 
 

@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\DTO\ContactoDTO;
+use App\DTO\MensajeDTO;
 use App\Entity\ApiKey;
 use App\Entity\Contacto;
 use App\Entity\Mensaje;
+use App\Entity\Usuario;
 use App\Repository\MensajeRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,6 +20,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use OpenApi\Attributes as OA;
 
 
 
@@ -47,21 +52,52 @@ class MensajeController extends AbstractController
     }
 
 
-    #[Route('/mensaje/save', name: 'app_mensaje_save', methods: ['POST'])]
+    #[Route('/api/mensaje/save', name: 'app_mensaje_crear', methods: ['POST'])]
+    #[OA\Tag(name: 'Mensajes')]
+    #[OA\RequestBody(description: "Dto del mensaje", required: true, content: new OA\JsonContent(ref: new Model(type:MensajeDTO::class)))]
     public function save(Request $request):JsonResponse
     {
-        $json = json_decode($request->getContent(), true);
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $mensajeRepository = $em->getRepository(Mensaje::class);
+        $userRepository = $em->getRepository(Usuario::class);
 
-        $mensaje = new Mensaje();
-        $mensaje->setDescripcion($json['descripcion']);
-        $now = new \DateTime("now");
-        $mensaje->setFecha($now);
 
-        $em = $this->doctrine->getManager();
-        $em->persist($mensaje);
-        $em->flush();
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
 
-        return new JsonResponse("{ mensaje: Mensaje creado correctamente}", 200, [], true);
+        //Obtenemos los parámetros del JSON
+        $descripcion = $json['mensaje'];
+        $usuario = $json['usuario'];
+
+
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        if($descripcion != null) {
+            $mensajeNuevo = new Mensaje();
+            $mensajeNuevo->setDescripcion($descripcion);
+            $now = new \DateTime("now");
+            $mensajeNuevo->setFecha($now);
+
+            //GESTION DEL ROL
+            if ($usuario == null) {
+                //Obtenemos el rol de usuario por defecto
+                $mensajeUser = $userRepository->findOneByUsername("");
+                $mensajeNuevo->setIdUsuario($mensajeUser);
+
+            } else {
+                $usuario1 = $userRepository->findOneByUsername($usuario);
+                $mensajeNuevo->setIdUsuario($usuario1);
+            }
+
+
+            //GUARDAR
+            $mensajeRepository->save($mensajeNuevo, true);
+
+
+            return new JsonResponse("Mensaje creado correctamente", 200, [], true);
+        }else{
+            return new JsonResponse("No ha indicado descripcion", 101, [], true);
+        }
 
     }
 

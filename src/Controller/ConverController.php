@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\DTO\ConversacionDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ConversacionRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,32 +34,24 @@ class ConverController extends AbstractController
 
 
 
-    #[Route('/conversacion/list', name: 'app_conversacion_listar', methods: ['GET'])]
-    #[OA\Tag(name: 'Conversaciones')]
-    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
-    public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils, Request $request): JsonResponse
+    #[Route('/api/conversacion/list', name: 'app_conversacion_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Conversacion')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ConversacionDTO::class))))]
+    public function listar(ConversacionRepository $conversacionRepository, DtoConverters $converters, Utils $utils): JsonResponse
     {
 
-        if($utils->comprobarPermisos($request, "USER")){
-            $listUsuarios= $usuarioRepository->findAll();
+        $listConversaciones = $conversacionRepository->findAll();
 
-            $listJson = array();
+        $listJson = array();
 
-            foreach($listUsuarios as $user){
-                $usarioDto = $converters-> usuarioToDto($user);
-                $json = $utils->toJson($usarioDto,null);
-                $listJson[] = json_decode($json);
-            }
-
-
-            return new JsonResponse($listJson, 200,[],false);
-        }else{
-            return new JsonResponse("{ message: Unauthorized}", 401,[],false);
-
+        foreach ($listConversaciones as $conver) {
+            $converDTO = $converters->converToDto($conver);
+            $json = $utils->toJson($converDTO, null);
+            $listJson[] = json_decode($json);
         }
 
-
-
+        return new JsonResponse($listJson,200,[],false);
 
     }
 

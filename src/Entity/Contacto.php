@@ -21,11 +21,12 @@ class Contacto
     #[ORM\Column(length: 250, nullable: true)]
     private ?string $nombreUsuario = null;
 
-    #[ORM\ManyToMany(targetEntity: Usuario::class, inversedBy: 'contactos')]
-    private Collection $id_Usuario;
+    #[ORM\Column(length: 250, nullable: true)]
+    private ?string $telefono = null;
 
-    #[ORM\OneToMany(mappedBy: 'id_contacto', targetEntity: Conversacion::class)]
-    private Collection $conversacions;
+    #[ORM\ManyToOne(inversedBy: 'contacto')]
+    private ?Usuario $id_usuario = null;
+
 
     public function __construct()
     {
@@ -33,42 +34,71 @@ class Contacto
         $this->conversacions = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getNombre(): ?string
     {
         return $this->nombre;
     }
 
-    public function setNombre(?string $nombre): self
+    /**
+     * @param string|null $nombre
+     */
+    public function setNombre(?string $nombre): void
     {
         $this->nombre = $nombre;
-
-        return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getNombreUsuario(): ?string
     {
         return $this->nombreUsuario;
     }
 
-    public function setNombreUsuario(?string $nombreUsuario): self
+    /**
+     * @param string|null $nombreUsuario
+     */
+    public function setNombreUsuario(?string $nombreUsuario): void
     {
         $this->nombreUsuario = $nombreUsuario;
-
-        return $this;
     }
 
     /**
-     * @return Collection<int, Usuario>
+     * @return Usuario|null
      */
-    public function getIdUsuario(): Collection
+    public function getIdUsuario(): ?Usuario
     {
-        return $this->id_Usuario;
+        return $this->id_usuario;
     }
+
+    /**
+     * @param Usuario|null $id_usuario
+     */
+    public function setIdUsuario(?Usuario $id_usuario): void
+    {
+        $this->id_usuario = $id_usuario;
+    }
+
+
 
     public function addIdUsuario(Usuario $idUsuario): self
     {
@@ -115,4 +145,22 @@ class Contacto
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getTelefono(): ?string
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * @param string|null $telefono
+     */
+    public function setTelefono(?string $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
+
+
 }

@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\DTO\ChatDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
+use App\Entity\Chat;
 use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ChatRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UsuarioController extends AbstractController
+class ChatController extends AbstractController
 {
 
     private ManagerRegistry $doctrine;
@@ -43,20 +46,20 @@ class UsuarioController extends AbstractController
         ]);
     }
 
-    #[Route('/api/usuario/list', name: 'app_usuario_listar', methods: ['GET'])]
-    #[OA\Tag(name: 'Usuarios')]
+    #[Route('/api/chat/list', name: 'app_chat_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
     #[Security(name: "apikey")]
-    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
-    public function listar(UsuarioRepository $usuarioRepository, DtoConverters $converters, Utils $utils): JsonResponse
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
+    public function listar(ChatRepository $chatRepository, DtoConverters $converters, Utils $utils): JsonResponse
     {
 
-        $listUsuarios = $usuarioRepository->findAll();
+        $listChats = $chatRepository->findAll();
 
         $listJson = array();
 
-        foreach ($listUsuarios as $user) {
-            $userDTO = $converters->usuarioToDto($user);
-            $json = $utils->toJson($userDTO, null);
+        foreach ($listChats as $chat) {
+            $chatDTO = $converters->chatToDto($chat);
+            $json = $utils->toJson($chatDTO, null);
             $listJson[] = json_decode($json);
         }
 
@@ -97,58 +100,64 @@ class UsuarioController extends AbstractController
     }
 
 
-    #[Route('/api/usuario/save', name: 'app_usuario_crear', methods: ['POST'])]
-    #[OA\Tag(name: 'Usuarios')]
-    #[OA\RequestBody(description: "Dto del usuario", required: true, content: new OA\JsonContent(ref: new Model(type:CreateUserDto::class)))]
-    #[OA\Response(response: 200,description: "Usuario creado correctamente")]
-    #[OA\Response(response: 101,description: "No ha indicado usario y contraseña")]
+    #[Route('/api/chat/save', name: 'app_chat_crear', methods: ['POST'])]
+    #[OA\Tag(name: 'Chat')]
+    #[OA\RequestBody(description: "Dto del chat", required: true, content: new OA\JsonContent(ref: new Model(type:ChatDTO::class)))]
     public function save(Request $request, Utils $utils): JsonResponse
     {
 
         //CARGA DATOS
         $em = $this-> doctrine->getManager();
         $userRepository = $em->getRepository(Usuario::class);
-        $rolRepository = $em->getRepository(Rol::class);
         $apiKeyRepository = $em->getRepository(ApiKey::class);
+        $chatRepository = $em->getRepository(Chat::class);
 
 
         //Obtener Json del body y pasarlo a DTO
         $json = json_decode($request-> getContent(), true);
 
         //Obtenemos los parámetros del JSON
-        $username = $json['username'];
-        $password = $json['password'];
-        $rolname = $json['rol'];
+        $mensaje = $json['mensaje'];
+        $emisorID = $json['emisor'];
+        $receptorID = $json['receptor'];
 
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
-        if($username != null and $password != null) {
-            $usuarioNuevo = new Usuario();
-            $usuarioNuevo->setUsername($username);
-            $usuarioNuevo->setPassword($utils->hashPassword($password));
+        if($mensaje != null and $emisorID != null) {
+            $chatNuevo = new Chat();
+            $chatNuevo->setMensaje($mensaje);
+            $now = new \DateTime("now");
+            $chatNuevo->setFecha($now);
 
 
 
             //GESTION DEL ROL
-            if ($rolname == null) {
+            if ($emisorID == null) {
                 //Obtenemos el rol de usuario por defecto
-                $rolUser = $rolRepository->findOneByIdentificador("USER");
-                $usuarioNuevo->setRol($rolUser);
+                $emisorUser = $userRepository->findOneByUsername("");
+                $chatNuevo->setIdEmisor($emisorUser);
 
             } else {
-                $rol = $rolRepository->findOneByIdentificador($rolname);
-                $usuarioNuevo->setRol($rol);
+                $rol = $userRepository->findOneByUsername($emisorID);
+                $chatNuevo->setIdEmisor($rol);
+            }
+
+            if ($receptorID == null) {
+                //Obtenemos el rol de usuario por defecto
+                $receptorUser = $userRepository->findOneByUsername("");
+                $chatNuevo->setIdReceptor($receptorUser);
+
+            } else {
+                $rol = $userRepository->findOneByUsername($receptorID);
+                $chatNuevo->setIdReceptor($rol);
             }
 
             //GUARDAR
-            $userRepository->save($usuarioNuevo, true);
+            $chatRepository->save($chatNuevo, true);
 
-
-            $utils-> generateApiToken($usuarioNuevo,$apiKeyRepository);
-
-            return new JsonResponse("Usuario creado correctamente", 200, [], true);
+            return new JsonResponse("Mensaje enviado correctamente", 200, [], true);
         }else{
-            return new JsonResponse("No ha indicado usario y contraseña", 101, [], true);
+            return new JsonResponse("No ha indicado mensaje ni receptor", 101, [], true);
         }
 
     }

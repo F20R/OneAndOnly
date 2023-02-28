@@ -25,7 +25,7 @@ class LoginController extends AbstractController
     }
 
 
-    #[Route('/api/login', name: 'app_login', methods: ["POST"])]
+    #[Route('/api/login/auth', name: 'app_login', methods: ["POST"])]
     #[OA\Tag(name: 'Login')]
     #[OA\RequestBody(description: "Dto de autentificación", content: new OA\JsonContent(ref: new Model(type: LoginDto::class)))]
     public function login(Request $request, Utils $utils): JsonResponse
