@@ -69,7 +69,6 @@ class ChatController extends AbstractController
 
 
 
-
     #[Route('/api/usuario/buscar', name: 'app_usuario_buscar', methods: ['GET'])]
     #[OA\Tag(name: 'Usuarios')]
     #[OA\Parameter(name: "nombre", description: "Nombre de usuario que vas a buscar", in: "query", required: true, schema: new OA\Schema(type: "string") )]

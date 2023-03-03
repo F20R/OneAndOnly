@@ -64,5 +64,16 @@ class ChatRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+public function findByReceptor($idUser): array{
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id_emisor = :val')
+            ->orWhere('m.id_receptor = :val')
+            ->setParameter('val', $idUser)
+            ->orderBy('m.fecha', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+}
+
 
 }
