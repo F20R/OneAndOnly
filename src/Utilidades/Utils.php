@@ -153,11 +153,16 @@ class Utils
     }
 
 
-    public function esApiKeyValida($token, $permisoRequerido, ApiKeyRepository $apiKeyRepository,UsuarioRepository $usuarioRepository):bool
+    public function esApiKeyValida($token, $permisoRequerido):bool
     {
+        $em = $this-> doctrine->getManager();
+        $usuarioRepository = $em->getRepository(Usuario::class);
+        $apiKeyRepository = $em->getRepository(ApiKey::class);
+
+        $id_usuario = Token::getPayload($token)["user_id"];
+
         $apiKey = $apiKeyRepository->findOneBy(array("token" => $token));
         $fechaActual = DateTime::createFromFormat('Y-m-d H:i:s', date("Y-m-d H:i:s"));
-        $id_usuario = Token::getPayload($token)["user_id"];
         $rol_name= Token::getPayload($token)["user_rol"];
         $usuario= $usuarioRepository->findOneBy(array("id" => $id_usuario));
 

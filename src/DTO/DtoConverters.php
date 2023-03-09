@@ -47,7 +47,7 @@ class DtoConverters
         $chatDto = new ChatDTO();
         $chatDto->setId($chat->getId());
         $chatDto->setMensaje($chat->getMensaje());
-        $chatDto->setFecha($chat->getFecha());
+        $chatDto->setFecha($chat->getFecha()->format('Y-m-d H:i:s'));
         if($chat->getIdEmisor()!=null){
             $chatDto->setEmisorDTO($this->usuarioToDto($chat->getIdEmisor()));
         }

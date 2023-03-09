@@ -7,7 +7,7 @@ class ChatDTO
 
     private int $id;
     private  string $mensaje;
-    private \DateTime $fecha  ;
+    private string $fecha  ;
     private UserDTO $emisorDTO;
     private UserDTO $receptorDTO;
 
@@ -44,17 +44,17 @@ class ChatDTO
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
-    public function getFecha(): \DateTime
+    public function getFecha(): string
     {
         return $this->fecha;
     }
 
     /**
-     * @param \DateTime $fecha
+     * @param string $fecha
      */
-    public function setFecha(\DateTime $fecha): void
+    public function setFecha(string $fecha): void
     {
         $this->fecha = $fecha;
     }

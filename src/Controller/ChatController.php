@@ -19,6 +19,7 @@ use JsonMapper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
+use ReallySimpleJWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -64,6 +65,76 @@ class ChatController extends AbstractController
         }
 
         return new JsonResponse($listJson,200,[],false);
+
+    }
+
+    public function chatToJson(mixed $listaChats, DtoConverters $converters, Utils $utils): JsonResponse
+    {
+        $listJson = array();
+
+        foreach ($listaChats as $chats){
+            $chatDto = $converters->chatToDto($chats);
+            $chatDto->setFecha($chats->getFecha()->format('Y-m-d H:i:s'));
+
+            $json = $utils->toJson($chatDto,null);
+            $listJson[] = json_decode($json, true);
+        }
+        return new JsonResponse($listJson,200,[], false);
+    }
+
+    #[Route('/api/chat/list/id', name: 'app_chat_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
+    public function listarPorReceptor(ChatRepository $chatRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $chatRepository = $em->getRepository(Chat::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaReceptor = $chatRepository ->findByReceptor($id_usuario);
+            if ($listaReceptor){
+                return $this->chatToJson($listaReceptor,$converters,$utils);
+            }else{
+                return $this->json(['message' =>'No hay mensaje'],400);
+            }
+        }
+
+    }
+
+    #[Route('/api/chat/list/id2', name: 'app_chat_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
+    public function listarPorEmisor(ChatRepository $chatRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $chatRepository = $em->getRepository(Chat::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaEmisor = $chatRepository ->findByEmisor($id_usuario);
+            if ($listaEmisor){
+                return $this->chatToJson($listaEmisor,$converters,$utils);
+            }else{
+                return $this->json(['message' =>'No hay mensaje'],400);
+            }
+        }
 
     }
 
