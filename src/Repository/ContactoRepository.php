@@ -63,4 +63,12 @@ class ContactoRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findByUsuario($idContacto): array{
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id_usuario = :val')
+            ->setParameter('val', $idContacto)
+            ->getQuery()
+            ->getResult();
+
+    }
 }

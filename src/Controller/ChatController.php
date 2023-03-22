@@ -232,6 +232,68 @@ class ChatController extends AbstractController
 
     }
 
+    #[Route('/api/chat/save1', name: 'app_chat_crear', methods: ['PUT'])]
+    #[OA\Tag(name: 'Chat')]
+    #[OA\RequestBody(description: "Dto del chat", required: true, content: new OA\JsonContent(ref: new Model(type:ChatDTO::class)))]
+    public function put(Request $request, Utils $utils): JsonResponse
+    {
+
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $userRepository = $em->getRepository(Usuario::class);
+        $apiKeyRepository = $em->getRepository(ApiKey::class);
+        $chatRepository = $em->getRepository(Chat::class);
+
+
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
+
+        //Obtenemos los parámetros del JSON
+        $mensaje = $json['mensaje'];
+        $emisorID = $json['emisor'];
+        $receptorID = $json['receptor'];
+
+
+        //CREAR NUEVO USUARIO A PARTIR DEL JSON
+        if($mensaje != null and $emisorID != null) {
+            $chatNuevo = new Chat();
+            $chatNuevo->setMensaje($mensaje);
+            $now = new \DateTime("now");
+            $chatNuevo->setFecha($now);
+
+
+
+            //GESTION DEL ROL
+            if ($emisorID == null) {
+                //Obtenemos el rol de usuario por defecto
+                $emisorUser = $userRepository->findOneByUsername("");
+                $chatNuevo->setIdEmisor($emisorUser);
+
+            } else {
+                $rol = $userRepository->findOneByUsername($emisorID);
+                $chatNuevo->setIdEmisor($rol);
+            }
+
+            if ($receptorID == null) {
+                //Obtenemos el rol de usuario por defecto
+                $receptorUser = $userRepository->findOneByUsername("");
+                $chatNuevo->setIdReceptor($receptorUser);
+
+            } else {
+                $rol = $userRepository->findOneByUsername($receptorID);
+                $chatNuevo->setIdReceptor($rol);
+            }
+
+            //GUARDAR
+            $chatRepository->save($chatNuevo, true);
+
+            return new JsonResponse("Mensaje enviado correctamente", 200, [], true);
+        }else{
+            return new JsonResponse("No ha indicado mensaje ni receptor", 101, [], true);
+        }
+
+    }
+
     #[Route('/api/usuario/delete', name: 'app_usuario_delete', methods: ['GET'])]
     #[OA\Tag(name: 'Usuarios')]
     public function eliminar(Request $request): JsonResponse

@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\DTO\ChatDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
+use App\Entity\Chat;
 use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ChatRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +19,7 @@ use JsonMapper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
+use ReallySimpleJWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +46,8 @@ class UsuarioController extends AbstractController
             'path' => 'src/Controller/UsuarioController.php',
         ]);
     }
+
+
 
     #[Route('/api/usuario/list', name: 'app_usuario_listar', methods: ['GET'])]
     #[OA\Tag(name: 'Usuarios')]

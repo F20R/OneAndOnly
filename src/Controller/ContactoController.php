@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\DTO\ChatDTO;
 use App\DTO\ContactoDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
+use App\Entity\Chat;
 use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ChatRepository;
 use App\Repository\ContactoRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
@@ -18,6 +21,7 @@ use JsonMapper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
+use ReallySimpleJWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +46,47 @@ class ContactoController extends AbstractController
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/UsuarioController.php',
         ]);
+    }
+
+    public function contactoToJson(mixed $listaContactos, DtoConverters $converters, Utils $utils): JsonResponse
+    {
+        $listJson = array();
+
+        foreach ($listaContactos as $contactos){
+            $contactoDto = $converters->contactoToDto($contactos);
+
+            $json = $utils->toJson($contactoDto,null);
+            $listJson[] = json_decode($json, true);
+        }
+        return new JsonResponse($listJson,200,[], false);
+    }
+
+    #[Route('/api/usuario/list/id', name: 'app_chat_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
+    public function listarPorUsuario(ContactoRepository $contactoRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $contactoRepository = $em->getRepository(Usuario::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaUsuario = $contactoRepository ->findByUsuario($id_usuario);
+            if ($listaUsuario){
+                return $this->contactoToJson($listaUsuario,$converters,$utils);
+            }else{
+                return $this->json(['message' =>'Contacto no existe'],400);
+            }
+        }
+
     }
 
     #[Route('/api/contacto/list', name: 'app_contacto_listar', methods: ['GET'])]
@@ -125,6 +170,8 @@ class ContactoController extends AbstractController
         }
 
     }
+
+
 
 
     #[Route('/api/contacto/delete', name: 'app_contacto_delete', methods: ['DELETE'])]
