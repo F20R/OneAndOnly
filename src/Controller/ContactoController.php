@@ -69,7 +69,7 @@ class ContactoController extends AbstractController
     {
 
         $em = $this->doctrine->getManager();
-        $contactoRepository = $em->getRepository(Usuario::class);
+        $contactoRepository = $em->getRepository(Contacto::class);
 
         $token = $request->headers->get('token');
         $valido = $utils->esApiKeyValida($token,null);

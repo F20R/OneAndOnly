@@ -67,6 +67,15 @@ class PerfilRepository extends ServiceEntityRepository
 //    }
 
 
+    public function findByPerfil($idPerfil): array{
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.usuario = :val')
+            ->setParameter('val', $idPerfil)
+            ->getQuery()
+            ->getResult();
+
+    }
+
 
 
 }

@@ -3,16 +3,21 @@
 namespace App\Controller;
 
 use App\DTO\CreateUserDto;
+use App\DTO\DtoConverters;
 use App\DTO\PerfilDto;
+use App\DTO\UserDTO;
 use App\Entity\ApiKey;
 use App\Entity\Contacto;
 use App\Entity\Galeria;
 use App\Entity\Perfil;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ContactoRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use ReallySimpleJWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -97,6 +102,46 @@ class PerfilController extends AbstractController
             return new JsonResponse("No ha indicado nombre y apellidos", 101, [], true);
         }
 
+    }
+
+    #[Route('/api/perfil/list/id', name: 'app_perfil_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: PerfilDto::class))))]
+    public function listarPorUsuario(ContactoRepository $contactoRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $perfilRepository = $em->getRepository(Perfil::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaUsuario = $perfilRepository ->findByPerfil($id_usuario);
+            if ($listaUsuario){
+                return $this->perfilToJson($listaUsuario,$converters,$utils);
+            }else{
+                return $this->json(['message' =>'Contacto no existe'],400);
+            }
+        }
+
+    }
+    public function perfilToJson(mixed $listaPerfiles, DtoConverters $converters, Utils $utils): JsonResponse
+    {
+        $listJson = array();
+
+        foreach ($listaPerfiles as $perfiles){
+            $perfilDto = $converters->perfilToDto($perfiles);
+
+            $json = $utils->toJson($perfilDto,null);
+            $listJson[] = json_decode($json, true);
+        }
+        return new JsonResponse($listJson,200,[], false);
     }
 
 

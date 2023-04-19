@@ -11,6 +11,7 @@ use App\Entity\Chat;
 use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ApiKeyRepository;
 use App\Repository\ChatRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
@@ -70,6 +71,67 @@ class UsuarioController extends AbstractController
 
     }
 
+    #[Route('/usuario/guardar', name: 'app_usuario_guardar', methods: ['POST'])]
+    public function save(UsuarioRepository $usuarioRepository,
+                         ApiKeyRepository  $apiKeyRepository,
+                         Request           $request,
+                         Utils             $utilidades): JsonResponse
+    {
+        //Obtener Json del body
+        $json = json_decode($request->getContent(), true);
+
+        $token = $json['token'];
+        if ($token) {
+            if (!$utilidades->esApiKeyValida($token, null))
+                return $this->json([
+                    'message' => "El token de sesión no es válido"
+                ]);
+            $usuario = $apiKeyRepository->findOneBy(array('token' => $token))->getUsuario();
+        } else
+            $usuario = new Usuario();
+
+
+        //Obtenemos los parámetros del JSON
+        $rol = $json['rol'];
+        $username = $json['username'];
+        $password = $json['password'];
+
+        if ($token || ($username and $password)) {
+
+            //COMPROBAR QUE EL USUARIO O EMAIL NO EXISTEN
+            if ($usuario->getUsername()!=$username) {
+                if ($usuarioRepository->findOneBy(array("username" => $username)) != null)
+                    return $this->json([
+                        'message' => "Ya existe un usuario registrado con el username " . $username,
+                    ]);
+                if ($usuarioRepository->findOneBy(array("username" => $username)) != null)
+                    return $this->json([
+                        'message' => "Ya existe un usuario registrado con el mismo usuario " . $username,
+                    ]);
+            }
+
+            //CREAR NUEVO USUARIO A PARTIR DEL JSON
+            if($username) $usuario->setUsername($username);
+            if($password) $usuario->setPassword($password);
+            if($rol) $usuario->setRol($rol);
+
+            //GUARDAR
+            $usuarioRepository->save($usuario, true);
+
+            if ($token) $apiKeyRepository->remove($apiKeyRepository->findOneBy(array('token'=>$token)), true);
+            $Nuevotoken = $utilidades->generateApiToken($usuario, $apiKeyRepository);
+
+            return $this->json([
+                'message' => "Usuario creado correctamente",
+                'token' => $Nuevotoken
+            ]);
+        } else {
+            return $this->json([
+                'message' => "Faltan datos del registro",
+            ]);
+        }
+    }
+
 
 
 
@@ -108,7 +170,7 @@ class UsuarioController extends AbstractController
     #[OA\RequestBody(description: "Dto del usuario", required: true, content: new OA\JsonContent(ref: new Model(type:CreateUserDto::class)))]
     #[OA\Response(response: 200,description: "Usuario creado correctamente")]
     #[OA\Response(response: 101,description: "No ha indicado usario y contraseña")]
-    public function save(Request $request, Utils $utils): JsonResponse
+    public function save1(Request $request, Utils $utils): JsonResponse
     {
 
         //CARGA DATOS
