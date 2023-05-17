@@ -11,6 +11,7 @@ class PerfilDto
     private int $id;
     private string $nombre;
     private string $apellidos;
+    private int $telefono;
     private string $fechaNacimiento;
     private int $sexo;
     private string $username;
@@ -20,15 +21,17 @@ class PerfilDto
      * @param int $id
      * @param string $nombre
      * @param string $apellidos
+     * @param int $telefono
      * @param string $fechaNacimiento
      * @param int $sexo
      * @param string $username
      */
-    public function __construct(int $id, string $nombre, string $apellidos, string $fechaNacimiento, int $sexo, string $username)
+    public function __construct(int $id, string $nombre, string $apellidos, int $telefono,string $fechaNacimiento, int $sexo, string $username)
     {
         $this->id = $id;
         $this->nombre = $nombre;
         $this->apellidos = $apellidos;
+        $this->telefono = $telefono;
         $this->fechaNacimiento = $fechaNacimiento;
         $this->sexo = $sexo;
         $this->username = $username;
@@ -43,6 +46,7 @@ class PerfilDto
         $this->id = $perfil->getId();
         $this->nombre = $perfil->getNombre();
         $this->apellidos = $perfil->getApellidos();
+        $this->telefono = $perfil->getTelefono();
         $this->fechaNacimiento = $perfil->getFechaNacimiento();
         $this->sexo = $perfil->getSexo();
         $this->username = $perfil->getUsuario()->getUsername();
@@ -96,6 +100,24 @@ class PerfilDto
     {
         $this->apellidos = $apellidos;
     }
+
+    /**
+     * @return int
+     */
+    public function getTelefono(): int
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * @param int $telefono
+     */
+    public function setTelefono(int $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
+
+
 
     /**
      * @return string

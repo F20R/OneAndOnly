@@ -11,6 +11,7 @@ use App\Entity\Contacto;
 use App\Entity\Galeria;
 use App\Entity\Rol;
 use App\Entity\Usuario;
+use App\Repository\ContactoRepository;
 use App\Repository\GaleriaRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
@@ -19,6 +20,7 @@ use JsonMapper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
+use ReallySimpleJWT\Token;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,6 +58,47 @@ class GaleriaController extends AbstractController
 
         return new JsonResponse($listJson,200,[],false);
 
+    }
+
+    #[Route('/api/galeria/list/id', name: 'app_chat_listar', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: GaleriaDTO::class))))]
+    public function listarPorUsuario(ContactoRepository $contactoRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $galeriaRepository = $em->getRepository(Galeria::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaUsuario = $galeriaRepository ->findByUsuario($id_usuario);
+            if ($listaUsuario){
+                return $this->galeriaToJson($listaUsuario,$converters,$utils);
+            }else{
+                return $this->json(['message' =>'Imagen no existe'],400);
+            }
+        }
+
+    }
+
+    public function galeriaToJson(mixed $listaImagenes, DtoConverters $converters, Utils $utils): JsonResponse
+    {
+        $listJson = array();
+
+        foreach ($listaImagenes as $imagenes){
+            $galeriaDto = $converters->galeriaToDto($imagenes);
+
+            $json = $utils->toJson($galeriaDto,null);
+            $listJson[] = json_decode($json, true);
+        }
+        return new JsonResponse($listJson,200,[], false);
     }
 
 

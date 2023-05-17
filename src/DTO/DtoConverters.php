@@ -19,7 +19,7 @@ class DtoConverters
     {
 
         $perfilDto = new PerfilDto($perfil->getId(),$perfil->getNombre(),
-            $perfil->getApellidos(),$perfil->getEdad(),$perfil->getSexo(),$perfil->getUsuario()->getUsername());
+            $perfil->getApellidos(),$perfil->getTelefono(),$perfil->getEdad(),$perfil->getSexo(),$perfil->getUsuario()->getUsername());
 
         return $perfilDto;
     }
@@ -87,10 +87,12 @@ class DtoConverters
         $contactoDto->setNombre($contacto->getNombre());
         $contactoDto->setNombreUsuario($contacto->getNombreUsuario());
         $contactoDto->setTelefono($contacto->getTelefono());
+        $contactoDto->setBloqueado($contacto->getBloqueado());
 
         return $contactoDto;
 
     }
+
 
     public function mensajeToDto(Mensaje $mensaje):MensajeDTO
     {

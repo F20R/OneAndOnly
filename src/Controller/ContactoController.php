@@ -61,7 +61,7 @@ class ContactoController extends AbstractController
         return new JsonResponse($listJson,200,[], false);
     }
 
-    #[Route('/api/usuario/list/id', name: 'app_chat_listar', methods: ['GET'])]
+    #[Route('/api/contacto/list/id', name: 'app_contacto_listarporusuario', methods: ['GET'])]
     #[OA\Tag(name: 'Chat')]
     #[Security(name: "apikey")]
     #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
@@ -88,6 +88,7 @@ class ContactoController extends AbstractController
         }
 
     }
+
 
     #[Route('/api/contacto/list', name: 'app_contacto_listar', methods: ['GET'])]
     #[OA\Tag(name: 'Contactos')]
@@ -139,6 +140,7 @@ class ContactoController extends AbstractController
         $nombreUsuario = $json['nombreUsuario'];
         $telefono = $json['telefono'];
         $usuario = $json['usuario'];
+        $bloqueado = $json['bloqueado'];
 
 
         //CREAR NUEVO USUARIO A PARTIR DEL JSON
@@ -147,6 +149,7 @@ class ContactoController extends AbstractController
             $contactoNuevo->setNombre($nombre);
             $contactoNuevo->setNombreUsuario($nombreUsuario);
             $contactoNuevo->setTelefono($telefono);
+            $contactoNuevo->setBloqueado($bloqueado);
 
             //GESTION DEL ROL
             if ($nombre == null) {

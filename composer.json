@@ -11,6 +11,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
         "nelmio/api-doc-bundle": "^4.10",
+        "nelmio/cors-bundle": "^2.3",
         "netresearch/jsonmapper": "^4.1",
         "rbdwllr/reallysimplejwt": "^5.0",
         "symfony/asset": "6.2.*",

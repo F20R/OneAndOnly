@@ -8,6 +8,7 @@ class ContactoDTO
     private string $nombre ;
     private  string $nombre_usuario;
     private  string $telefono;
+    private string $bloqueado;
     private  UserDTO $userDTO;
 
     public function __construct()
@@ -93,6 +94,24 @@ class ContactoDTO
     /**
      * @return string
      */
+    public function getBloqueado(): string
+    {
+        return $this->bloqueado;
+    }
+
+    /**
+     * @param string $bloqueado
+     */
+    public function setBloqueado(string $bloqueado): void
+    {
+        $this->bloqueado = $bloqueado;
+    }
+
+    /**
+     * @return string
+     */
+
+
 
 
 

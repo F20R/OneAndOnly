@@ -67,6 +67,7 @@ class PerfilController extends AbstractController
         //Obtenemos los parámetros del JSON
         $nombre = $json['nombre'];
         $apellidos = $json['apellidos'];
+        $telefono = $json['telefono'];
         $edad = $json['edad'];
         $sexo = $json['sexo'];
         $usuario = $json['usuario'];
@@ -77,6 +78,7 @@ class PerfilController extends AbstractController
             $perfilNuevo = new Perfil();
             $perfilNuevo->setNombre($nombre);
             $perfilNuevo->setApellidos($apellidos);
+            $perfilNuevo->setTelefono($telefono);
             $perfilNuevo->setEdad($edad);
             $perfilNuevo->setSexo($sexo);
 

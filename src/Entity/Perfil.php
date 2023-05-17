@@ -26,6 +26,10 @@ class Perfil
 
     #[ORM\Column]
     #[Groups(['user_query'])]
+    private ?int $telefono = null;
+
+    #[ORM\Column]
+    #[Groups(['user_query'])]
     private ?int $edad = null;
 
     #[ORM\Column]
@@ -83,6 +87,24 @@ class Perfil
     {
         $this->apellidos = $apellidos;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getTelefono(): ?int
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * @param int|null $telefono
+     */
+    public function setTelefono(?int $telefono): void
+    {
+        $this->telefono = $telefono;
+    }
+
+
 
     /**
      * @return int|null

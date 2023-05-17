@@ -27,6 +27,9 @@ class Contacto
     #[ORM\ManyToOne(inversedBy: 'contacto')]
     private ?Usuario $id_usuario = null;
 
+    #[ORM\Column(name: "bloqueado")]
+    private ?bool $bloqueado = null;
+
 
     public function __construct()
     {
@@ -161,6 +164,23 @@ class Contacto
     {
         $this->telefono = $telefono;
     }
+
+    /**
+     * @return bool|null
+     */
+    public function getBloqueado(): ?bool
+    {
+        return $this->bloqueado;
+    }
+
+    /**
+     * @param bool|null $bloqueado
+     */
+    public function setBloqueado(?bool $bloqueado): void
+    {
+        $this->bloqueado = $bloqueado;
+    }
+
 
 
 }

@@ -63,4 +63,13 @@ class GaleriaRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findByUsuario($idGaleria): array{
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id_usuario = :val')
+            ->setParameter('val', $idGaleria)
+            ->getQuery()
+            ->getResult();
+
+    }
 }
