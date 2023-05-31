@@ -42,7 +42,7 @@ class DtoConverters
 
     }
 
-    public function chatToDto(Chat $chat):ChatDTO
+    public function chatToDto(Chat $chat, $id_emisor):ChatDTO
     {
         $chatDto = new ChatDTO();
         $chatDto->setId($chat->getId());
@@ -50,10 +50,16 @@ class DtoConverters
         $chatDto->setFecha($chat->getFecha()->format('Y-m-d H:i:s'));
         if($chat->getIdEmisor()!=null){
             $chatDto->setEmisorDTO($this->usuarioToDto($chat->getIdEmisor()));
+            if($chat-> getIdEmisor() == $id_emisor){
+                $chatDto-> setEsMio(true);
+            }else{
+                $chatDto-> setEsMio(false);
+            }
         }
         if($chat->getIdReceptor()!=null){
             $chatDto->setReceptorDTO($this->usuarioToDto($chat->getIdReceptor()));
         }
+
 
         return $chatDto;
 

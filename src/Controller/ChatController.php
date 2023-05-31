@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\ChatDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
+use App\DTO\IdUsuarioDTO;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
 use App\Entity\Chat;
@@ -12,6 +13,7 @@ use App\Entity\Contacto;
 use App\Entity\Rol;
 use App\Entity\Usuario;
 use App\Repository\ChatRepository;
+use App\Repository\ContactoRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,28 +49,28 @@ class ChatController extends AbstractController
         ]);
     }
 
-    #[Route('/api/chat/list', name: 'app_chat_listar', methods: ['GET'])]
-    #[OA\Tag(name: 'Chat')]
-    #[Security(name: "apikey")]
-    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
-    public function listar(ChatRepository $chatRepository, DtoConverters $converters, Utils $utils): JsonResponse
-    {
+//    #[Route('/api/chat/list', name: 'app_chat_listar', methods: ['GET'])]
+//    #[OA\Tag(name: 'Chat')]
+//    #[Security(name: "apikey")]
+//    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
+//    public function listar(ChatRepository $chatRepository, DtoConverters $converters, Utils $utils): JsonResponse
+//    {
+//
+//        $listChats = $chatRepository->findAll();
+//
+//        $listJson = array();
+//
+//        foreach ($listChats as $chat) {
+//            $chatDTO = $converters->chatToDto($chat);
+//            $json = $utils->toJson($chatDTO, null);
+//            $listJson[] = json_decode($json);
+//        }
+//
+//        return new JsonResponse($listJson,200,[],false);
+//
+//    }
 
-        $listChats = $chatRepository->findAll();
-
-        $listJson = array();
-
-        foreach ($listChats as $chat) {
-            $chatDTO = $converters->chatToDto($chat);
-            $json = $utils->toJson($chatDTO, null);
-            $listJson[] = json_decode($json);
-        }
-
-        return new JsonResponse($listJson,200,[],false);
-
-    }
-
-    public function chatToJson(mixed $listaChats, DtoConverters $converters, Utils $utils): JsonResponse
+    public function chatToJson(mixed $listaChats, DtoConverters $converters, Utils $utils, $id_usuario): JsonResponse
     {
         $listJson = array();
 
@@ -78,11 +80,13 @@ class ChatController extends AbstractController
 
             $json = $utils->toJson($chatDto,null);
             $listJson[] = json_decode($json, true);
+
+
         }
-        return new JsonResponse($listJson,200,[], false);
+        return new JsonResponse([$listJson],200,[], false);
     }
 
-    #[Route('/api/chat/list/id', name: 'app_chat_listar', methods: ['GET'])]
+    #[Route('/api/chat/list/id/listar', name: 'app_chat_listarporreceptor', methods: ['GET'])]
     #[OA\Tag(name: 'Chat')]
     #[Security(name: "apikey")]
     #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: ChatDTO::class))))]
@@ -100,15 +104,44 @@ class ChatController extends AbstractController
         } else {
             $id_usuario = Token::getPayload($token)["user_id"];
 
-            $listaReceptor = $chatRepository ->findByReceptor($id_usuario);
+            $listaReceptor = $chatRepository ->findByEmisor($id_usuario);
             if ($listaReceptor){
-                return $this->chatToJson($listaReceptor,$converters,$utils);
+                return $this->chatToJson($listaReceptor,$converters,$utils,$id_usuario);
             }else{
                 return $this->json(['message' =>'No hay mensaje'],400);
             }
         }
 
     }
+
+    #[Route('/api/chat/list/id/user', name: 'app_contacto', methods: ['GET'])]
+    #[OA\Tag(name: 'Chat')]
+    #[Security(name: "apikey")]
+    #[OA\Response(response:200,description:"successful operation" ,content: new OA\JsonContent(type: "array", items: new OA\Items(ref:new Model(type: UserDTO::class))))]
+    public function listarPorId(ContactoRepository $contactoRepository, Request $request,DtoConverters $converters, Utils $utils): JsonResponse
+    {
+
+        $em = $this->doctrine->getManager();
+        $contactoRepository = $em->getRepository(Chat::class);
+
+        $token = $request->headers->get('token');
+        $valido = $utils->esApiKeyValida($token,null);
+
+        if (!$valido){
+            return $this->json(['message' =>'El token de sesion ha caducado'], 400);
+        } else {
+            $id_usuario = Token::getPayload($token)["user_id"];
+
+            $listaUsuario = $contactoRepository ->findByUsuario($id_usuario);
+            if ($listaUsuario){
+                return $this->chatToJson($listaUsuario,$converters,$utils,$id_usuario);
+            }else{
+                return $this->json(['message' =>'Chat no existe'],400);
+            }
+        }
+
+    }
+
 
     #[Route('/api/chat/list/id2', name: 'app_chat_listar', methods: ['GET'])]
     #[OA\Tag(name: 'Chat')]
@@ -130,7 +163,7 @@ class ChatController extends AbstractController
 
             $listaEmisor = $chatRepository ->findByEmisor($id_usuario);
             if ($listaEmisor){
-                return $this->chatToJson($listaEmisor,$converters,$utils);
+                return $this->chatToJson($listaEmisor,$converters,$utils,$id_usuario);
             }else{
                 return $this->json(['message' =>'No hay mensaje'],400);
             }
@@ -170,7 +203,7 @@ class ChatController extends AbstractController
     }
 
 
-    #[Route('/api/chat/save', name: 'app_chat_crear', methods: ['POST'])]
+    #[Route('/api/chat/guarda', name: 'app_chat_guarda', methods: ['POST'])]
     #[OA\Tag(name: 'Chat')]
     #[OA\RequestBody(description: "Dto del chat", required: true, content: new OA\JsonContent(ref: new Model(type:ChatDTO::class)))]
     public function save(Request $request, Utils $utils): JsonResponse

@@ -79,6 +79,32 @@ public function findByReceptor($idUser): array{
             ->andWhere('m.id_emisor = :val')
             ->orWhere('m.id_emisor = :val')
             ->setParameter('val', $idUser)
+            ->orderBy('m.fecha', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+
+
+    }
+
+    public function findByEmisorReceptor($idEmisor, $idReceptor): array{
+        $query = 'select * from chat  where id_emisor_id in (:idEmisor,:idReceptor) and id_receptor_id in (:idEmisor,:idReceptor)';
+
+        $st = $this->getConnection()->prepare($query);
+
+        $st->execute([
+            'idEmisor' => $idEmisor,
+            'idReceptor' => $idReceptor]);
+
+        $results = $st->fetchAll();
+
+        return $results;
+    }
+
+    public function findByUsuario($idChat): array{
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.id = :val')
+            ->setParameter('val', $idChat)
             ->orderBy('m.fecha', 'DESC')
             ->getQuery()
             ->getResult();

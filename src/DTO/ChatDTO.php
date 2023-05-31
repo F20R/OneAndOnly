@@ -8,6 +8,7 @@ class ChatDTO
     private int $id;
     private  string $mensaje;
     private string $fecha  ;
+    private bool $es_mio;
     private UserDTO $emisorDTO;
     private UserDTO $receptorDTO;
 
@@ -90,6 +91,25 @@ class ChatDTO
     {
         $this->receptorDTO = $receptorDTO;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEsMio(): bool
+    {
+        return $this->es_mio;
+    }
+
+    /**
+     * @param bool $es_mio
+     */
+    public function setEsMio(bool $es_mio): void
+    {
+        $this->es_mio = $es_mio;
+    }
+
+
+
 
 
 
