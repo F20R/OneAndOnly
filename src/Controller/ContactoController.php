@@ -118,7 +118,7 @@ class ContactoController extends AbstractController
 
 
 
-    #[Route('/api/contacto/save', name: 'app_contacto_crear', methods: ['POST'])]
+    #[Route('/api/contacto/save/guardar', name: 'app_contacto_save', methods: ['POST'])]
     #[OA\Tag(name: 'Contactos')]
     #[OA\RequestBody(description: "Dto del contacto", required: true, content: new OA\JsonContent(ref: new Model(type:ContactoDTO::class)))]
     #[OA\Response(response: 200,description: "Contacto creado correctamente")]
@@ -137,7 +137,7 @@ class ContactoController extends AbstractController
 
         //Obtenemos los parámetros del JSON
         $nombre = $json['nombre'];
-        $nombreUsuario = $json['nombreUsuario'];
+        $nombreUsuario = $json['nombre_usuario'];
         $telefono = $json['telefono'];
         $usuario = $json['usuario'];
         $bloqueado = $json['bloqueado'];
