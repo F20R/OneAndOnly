@@ -118,7 +118,7 @@ class ContactoController extends AbstractController
 
 
 
-    #[Route('/api/contacto/save/guardar', name: 'app_contacto_save', methods: ['POST'])]
+    #[Route('/api/contacto/save/guardar', name: 'app_contacto', methods: ['POST'])]
     #[OA\Tag(name: 'Contactos')]
     #[OA\RequestBody(description: "Dto del contacto", required: true, content: new OA\JsonContent(ref: new Model(type:ContactoDTO::class)))]
     #[OA\Response(response: 200,description: "Contacto creado correctamente")]
@@ -172,6 +172,68 @@ class ContactoController extends AbstractController
             return new JsonResponse("No ha indicado nombre y apellidos", 101, [], true);
         }
 
+    }
+
+    #[Route('/api/contacto/editar/{id}', name: 'app_contacto_edit', methods: ['POST'])]
+    #[OA\Tag(name: 'Contactos')]
+    #[OA\RequestBody(description: "Dto del contacto", required: true, content: new OA\JsonContent(ref: new Model(type:ContactoDTO::class)))]
+    #[OA\Response(response: 200,description: "Contacto editado correctamente")]
+    #[OA\Response(response: 101,description: "No ha indicado nombre de usuario")]
+    public function edit(Request $request, Utils $utils, int $id): JsonResponse
+    {
+
+        //CARGA DATOS
+        $em = $this-> doctrine->getManager();
+        $contactoRepository = $em->getRepository(Contacto::class);
+        $userRepository = $em->getRepository(Usuario::class);
+
+        //Obtener Json del body y pasarlo a DTO
+        $json = json_decode($request-> getContent(), true);
+
+        //Obtenemos los parámetros del JSON
+        $nombre = $json['nombre'];
+        $nombreUsuario = $json['nombre_usuario'];
+        $telefono = $json['telefono'];
+        $usuario = $json['usuario'];
+        $bloqueado = $json['bloqueado'];
+
+        //EDITAR CONTACTO A PARTIR DEL JSON
+        if($nombre != null and $nombreUsuario != null) {
+            //Obtenemos el contacto a editar
+            $contactoEditar = $contactoRepository->find($id);
+
+            if ($contactoEditar != null) {
+                //Actualizamos los datos del contacto
+                $contactoEditar->setNombre($nombre);
+                $contactoEditar->setNombreUsuario($nombreUsuario);
+                $contactoEditar->setTelefono($telefono);
+                $contactoEditar->setBloqueado($bloqueado);
+
+                //GESTION DEL ROL
+                if ($nombre == null) {
+                    //Obtenemos el rol de usuario por defecto
+                    $contactoUser = $userRepository->findOneByUsername("");
+                    $contactoEditar->setIdUsuario($contactoUser);
+
+                } else {
+                    $usuario1 = $userRepository->findOneByUsername($usuario);
+                    $contactoEditar->setIdUsuario($usuario1);
+                }
+
+                //Guardamos los cambios en la base de datos
+                try {
+                    $em->persist($contactoEditar);
+                    $em->flush();
+                    return new JsonResponse(['status' => 'ok', 'message' => 'Contacto editado correctamente']);
+                } catch (\Exception) {
+                    return new JsonResponse(['status' => 'error', 'message' => 'Error al editar el contacto']);
+                }
+            } else {
+                return new JsonResponse(['status' => 'error', 'message' => 'No se ha encontrado el contacto']);
+            }
+        } else {
+            return new JsonResponse(['status' => 'error', 'message' => 'Faltan campos obligatorios']);
+        }
     }
 
 

@@ -87,18 +87,14 @@ public function findByReceptor($idUser): array{
 
     }
 
-    public function findByEmisorReceptor($idEmisor, $idReceptor): array{
+    public function findByEmisorReceptor($id_emisor, $id_receptor): array{
         $query = 'select * from chat  where id_emisor_id in (:idEmisor,:idReceptor) and id_receptor_id in (:idEmisor,:idReceptor)';
 
-        $st = $this->getConnection()->prepare($query);
+        $s = $this->getEntityManager()->getConnection()->prepare($query);
 
-        $st->execute([
-            'idEmisor' => $idEmisor,
-            'idReceptor' => $idReceptor]);
-
-        $results = $st->fetchAll();
-
-        return $results;
+        return $s->executeQuery([
+                'idEmisor' => $id_emisor,
+                'idReceptor' => $id_receptor])->fetchAllAssociative();
     }
 
     public function findByUsuario($idChat): array{

@@ -6,6 +6,7 @@ use App\DTO\ChatDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
 use App\DTO\IdUsuarioDTO;
+use App\DTO\MensajeDTO;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
 use App\Entity\Chat;
@@ -70,12 +71,12 @@ class ChatController extends AbstractController
 //
 //    }
 
-    public function chatToJson(mixed $listaChats, DtoConverters $converters, Utils $utils, $id_usuario): JsonResponse
+    public function chatToJson(mixed $listaChats, DtoConverters $converters, Utils $utils, $id_emisor): JsonResponse
     {
         $listJson = array();
 
         foreach ($listaChats as $chats){
-            $chatDto = $converters->chatToDto($chats);
+            $chatDto = $converters->chatToDto($chats, $id_emisor);
             $chatDto->setFecha($chats->getFecha()->format('Y-m-d H:i:s'));
 
             $json = $utils->toJson($chatDto,null);
@@ -96,6 +97,7 @@ class ChatController extends AbstractController
         $em = $this->doctrine->getManager();
         $chatRepository = $em->getRepository(Chat::class);
 
+        $id_receptor = $request->query->get('id_receptor');
         $token = $request->headers->get('token');
         $valido = $utils->esApiKeyValida($token,null);
 
@@ -104,7 +106,17 @@ class ChatController extends AbstractController
         } else {
             $id_usuario = Token::getPayload($token)["user_id"];
 
-            $listaReceptor = $chatRepository ->findByEmisor($id_usuario);
+            $listaBBDD = $chatRepository ->findByEmisorReceptor($id_usuario,3);
+            $listaReceptor = [];
+
+            foreach($listaBBDD as $r){
+                $mensaje = new ChatDTO();
+                $mensaje-> setMensaje($mensaje);
+                $mensaje-> setFecha($mensaje);
+           }
+
+
+
             if ($listaReceptor){
                 return $this->chatToJson($listaReceptor,$converters,$utils,$id_usuario);
             }else{
