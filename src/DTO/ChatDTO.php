@@ -107,8 +107,7 @@ class ChatDTO
     {
         $this->es_mio = $es_mio;
     }
-
-
+    
 
 
 

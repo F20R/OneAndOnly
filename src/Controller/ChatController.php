@@ -106,13 +106,15 @@ class ChatController extends AbstractController
         } else {
             $id_usuario = Token::getPayload($token)["user_id"];
 
-            $listaBBDD = $chatRepository ->findByEmisorReceptor($id_usuario,3);
+            $listaBBDD = $chatRepository ->findByEmisorReceptor($id_usuario, $id_receptor);
             $listaReceptor = [];
 
             foreach($listaBBDD as $r){
                 $mensaje = new ChatDTO();
-                $mensaje-> setMensaje($mensaje);
-                $mensaje-> setFecha($mensaje);
+                $mensaje-> setMensaje("");
+                $mensaje-> setFecha("");
+
+                return new JsonResponse([$listaBBDD],200,[], false);
            }
 
 
