@@ -103,7 +103,7 @@ class GaleriaController extends AbstractController
 
 
 
-    #[Route('/api/galeria/save', name: 'app_galeria_crear', methods: ['POST'])]
+    #[Route('/api/galeria/guardar/nueva', name: 'app_galeria', methods: ['POST'])]
     #[OA\Tag(name: 'Galeria')]
     #[OA\RequestBody(description: "Dto de Galeria", required: true, content: new OA\JsonContent(ref: new Model(type:GaleriaDTO::class)))]
     public function save(Request $request, Utils $utils): JsonResponse
