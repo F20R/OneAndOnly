@@ -5,14 +5,18 @@ namespace App\Controller;
 use App\DTO\ChatDTO;
 use App\DTO\CreateUserDto;
 use App\DTO\DtoConverters;
+use App\DTO\LoginDto;
+use App\DTO\PerfilDto;
 use App\DTO\UserDTO;
 use App\Entity\ApiKey;
 use App\Entity\Chat;
 use App\Entity\Contacto;
+use App\Entity\Perfil;
 use App\Entity\Rol;
 use App\Entity\Usuario;
 use App\Repository\ApiKeyRepository;
 use App\Repository\ChatRepository;
+use App\Repository\ContactoRepository;
 use App\Repository\UsuarioRepository;
 use App\Utilidades\Utils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -131,6 +135,7 @@ class UsuarioController extends AbstractController
             ]);
         }
     }
+
 
 
 

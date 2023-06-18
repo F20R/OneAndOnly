@@ -74,4 +74,5 @@ class UsuarioRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
             ;
     }
+
 }

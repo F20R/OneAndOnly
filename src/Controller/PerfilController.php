@@ -45,12 +45,12 @@ class PerfilController extends AbstractController
     }
 
 
-    #[Route('/api/perfil/save', name: 'app_perfil_crear', methods: ['POST'])]
+    #[Route('/api/perfil/save', name: 'app_perfil_save', methods: ['POST'])]
     #[OA\Tag(name: 'Perfil')]
     #[OA\RequestBody(description: "Dto del perfil", required: true, content: new OA\JsonContent(ref: new Model(type:PerfilDto::class)))]
     #[OA\Response(response: 200,description: "Perfil creado correctamente")]
     #[OA\Response(response: 101,description: "No ha indicado nombre y apellidos")]
-    public function save(Request $request, Utils $utils): JsonResponse
+    public function guardar(Request $request, Utils $utils): JsonResponse
     {
 
 
